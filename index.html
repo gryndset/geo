@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap">
+<link rel="canonical" href="https://geoscope.jp/index.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geoscope — 競合は今、AIに何回出てきている？</title>
+<meta property="og:title" content="Geoscope — 競合は今、AIに何回出てきている？">
+<meta property="og:description" content="ChatGPT・Perplexity・Gemini・Claudeの4AIを横断してブランドの出現率・引用URLをリアルタイム計測。GEOトラッキングツール、無料で始められます。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Geoscope">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Geoscope — 競合は今、AIに何回出てきている？">
+<meta name="twitter:description" content="ChatGPT・Perplexity・Gemini・Claudeの4AIを横断してブランドの出現率・引用URLをリアルタイム計測。GEOトラッキングツール、無料で始められます。">
+<meta name="description" content="ChatGPT・Perplexity・Gemini・Claudeの4AIで自社ブランドのGEO出現率を無料で計測。競合比較・引用URL分析・週次自動スキャン。日本初・登録不要・APIキーのみで即日利用可能。">
+<style>
+
+:root {
+  --bg:#070710; --bg2:#0b0b1c; --sf:#10101f;
+  --bd:rgba(255,255,255,.06); --bd2:rgba(255,255,255,.12);
+  --tx:#edeae0; --t2:rgba(237,234,224,.52); --t3:rgba(237,234,224,.22);
+  --gn:#3ddc84; --am:#f0b429; --rd:#ef6060; --pu:#8b7cf8;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+/* grain */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(7,7,16,.82);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
+.nl{text-decoration:none;}
+.nlm{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;letter-spacing:7px;text-transform:uppercase;color:var(--tx);line-height:1;}
+.nls{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;}
+.nav-links{display:flex;gap:4px;list-style:none;}
+.nav-links a{font-size:12px;color:var(--t2);text-decoration:none;padding:5px 12px;border-radius:3px;transition:all .2s;}
+.nav-links a:hover{color:var(--tx);background:rgba(255,255,255,.04);}
+.nav-r{display:flex;gap:8px;align-items:center;}
+.nav-ghost{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);text-decoration:none;padding:6px 14px;border:1px solid var(--bd);transition:all .2s;}
+.nav-ghost:hover{color:var(--t2);border-color:var(--bd2);}
+.nav-cta{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--tx);text-decoration:none;padding:8px 18px;transition:opacity .2s,transform .15s;}
+.nav-cta:hover{opacity:.87;transform:translateY(-1px);}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 80px;position:relative;overflow:hidden;}
+.hero-glow{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(139,124,248,.08) 0%,rgba(61,220,132,.05) 45%,transparent 70%);pointer-events:none;}
+.hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.1) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 65% 55% at 50% 38%,black 15%,transparent 100%);pointer-events:none;}
+.hero-horizon{position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--bd2) 30%,var(--bd2) 70%,transparent);}
+.hero-in{position:relative;z-index:1;max-width:800px;}
+
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--t3);text-transform:uppercase;border:1px solid var(--bd);padding:6px 14px;margin-bottom:32px;opacity:0;animation:up .6s .1s ease forwards;}
+.bd-live{width:5px;height:5px;border-radius:50%;background:var(--gn);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.hero-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(48px,7.5vw,90px);font-weight:300;line-height:1.03;letter-spacing:-1.5px;color:var(--tx);margin-bottom:24px;opacity:0;animation:up .8s .2s ease forwards;}
+.hero-h1 .dim{color:var(--t3);font-style:italic;}
+
+.hero-sub{font-size:16px;font-weight:300;color:var(--t2);line-height:1.8;max-width:480px;margin:0 auto 12px;opacity:0;animation:up .8s .3s ease forwards;}
+.hero-sub strong{color:var(--tx);font-weight:500;}
+
+.hero-desc{font-family:'DM Mono',monospace;font-size:11px;color:var(--t3);letter-spacing:1px;line-height:1.7;margin-bottom:44px;opacity:0;animation:up .8s .35s ease forwards;}
+
+.hero-ctas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;opacity:0;animation:up .8s .4s ease forwards;}
+.cta-main{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--tx);text-decoration:none;padding:14px 32px;transition:opacity .2s,transform .15s;display:inline-flex;align-items:center;gap:8px;}
+.cta-main:hover{opacity:.87;transform:translateY(-2px);}
+.cta-ghost{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);text-decoration:none;padding:14px 22px;border:1px solid var(--bd);transition:all .2s;}
+.cta-ghost:hover{color:var(--t2);border-color:var(--bd2);}
+
+.hero-micro{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:56px;opacity:0;animation:up .8s .45s ease forwards;}
+
+/* proof metrics */
+.hero-proof{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--bd);opacity:0;animation:up .8s .5s ease forwards;}
+.proof-item{padding:20px 24px;border-right:1px solid var(--bd);text-align:center;}
+.proof-item:last-child{border-right:none;}
+.proof-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--tx);line-height:1;margin-bottom:4px;}
+.proof-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;line-height:1.5;}
+
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* MARQUEE */
+.mq{border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);background:var(--bg2);overflow:hidden;padding:12px 0;}
+.mq-track{display:flex;animation:mq 28s linear infinite;width:max-content;}
+.mq-item{display:flex;align-items:center;gap:14px;padding:0 28px;border-right:1px solid var(--bd);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;white-space:nowrap;}
+.mq-dot{color:var(--pu);font-size:12px;}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTIONS */
+.sec{padding:100px 40px;}
+.sec-in{max-width:1100px;margin:0 auto;}
+.sec-bg{background:var(--bg2);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);}
+
+.s-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;color:var(--t3);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.s-tag::before{content:'';width:18px;height:1px;background:var(--bd2);}
+.s-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4.5vw,52px);font-weight:300;line-height:1.1;letter-spacing:-.5px;color:var(--tx);margin-bottom:16px;}
+.s-sub{font-size:14px;font-weight:300;color:var(--t2);line-height:1.85;max-width:480px;}
+
+/* DATA ROW */
+.data-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);margin:48px 0 0;}
+.data-item{background:var(--bg2);padding:24px;text-align:center;}
+.data-num{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;line-height:1;margin-bottom:4px;}
+.data-label{font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;line-height:1.6;}
+.data-src{font-family:'DM Mono',monospace;font-size:7px;color:rgba(237,234,224,.12);margin-top:4px;letter-spacing:.5px;}
+
+/* FEATURES */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);margin-top:56px;}
+.feat-card{background:var(--bg);padding:36px 32px;transition:background .2s;}
+.feat-card:hover{background:rgba(255,255,255,.025);}
+.feat-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;}
+.feat-ic{width:36px;height:36px;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.feat-n{font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);letter-spacing:1px;}
+.feat-q{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:8px;letter-spacing:-.1px;line-height:1.4;}
+.feat-a{font-size:12px;font-weight:300;color:var(--t2);line-height:1.75;}
+
+/* HOW */
+.how-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:64px;}
+.how-step{}
+.how-sn{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;color:rgba(255,255,255,.05);line-height:1;margin-bottom:20px;}
+.how-st{font-size:15px;font-weight:600;color:var(--tx);margin-bottom:6px;}
+.how-sd{font-size:13px;font-weight:300;color:var(--t2);line-height:1.75;}
+.how-time{font-family:'DM Mono',monospace;font-size:9px;color:var(--gn);letter-spacing:1.5px;margin-bottom:12px;}
+
+/* SEO VS GEO */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd);border:1px solid var(--bd);margin-top:48px;}
+.cmp-col{background:var(--bg2);padding:28px;}
+.cmp-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--bd);}
+.cmp-row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd);font-size:12px;}
+.cmp-row:last-child{border-bottom:none;}
+.cmp-k{font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);letter-spacing:.5px;min-width:72px;flex-shrink:0;margin-top:2px;}
+.cmp-v{color:var(--t2);font-weight:300;line-height:1.5;}
+
+/* GEO PRACTICES */
+.practice-list{display:flex;flex-direction:column;gap:8px;margin-top:48px;}
+.practice-item{background:var(--bg2);border:1px solid var(--bd);padding:20px 24px;display:flex;gap:20px;align-items:flex-start;}
+.practice-stars{font-size:11px;color:var(--am);flex-shrink:0;width:80px;letter-spacing:1px;}
+.practice-body{}
+.practice-title{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:6px;}
+.practice-desc{font-size:12px;font-weight:300;color:var(--t2);line-height:1.7;}
+.practice-badge{font-family:'DM Mono',monospace;font-size:8px;border:1px solid;padding:2px 7px;margin-top:8px;display:inline-block;letter-spacing:1px;}
+.pb-green{border-color:rgba(61,220,132,.3);color:var(--gn);}
+.pb-amber{border-color:rgba(240,180,41,.3);color:var(--am);}
+
+/* MARKET POSITION */
+.market-table{width:100%;border-collapse:collapse;margin-top:40px;font-size:13px;}
+.market-table th{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;padding:10px 16px;border-bottom:1px solid var(--bd);text-align:left;background:rgba(255,255,255,.02);}
+.market-table td{padding:13px 16px;border-bottom:1px solid var(--bd);color:var(--t2);font-weight:300;vertical-align:top;line-height:1.5;}
+.market-table td:first-child{font-weight:600;color:rgba(237,234,224,.75);}
+.market-table tr.us td{background:rgba(61,220,132,.04);border-color:rgba(61,220,132,.15);}
+.market-table tr.us td:first-child{color:var(--gn);}
+.market-table tr:last-child td{border-bottom:none;}
+.market-table tr:hover td{background:rgba(255,255,255,.02);}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--bd);border:1px solid var(--bd);margin-top:56px;}
+.pc{background:var(--bg);padding:40px 36px;}
+.pc.lit{background:var(--tx);}
+.pc.dim{background:rgba(255,255,255,.02);}
+.pc-badge{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--t3);margin-bottom:20px;display:flex;align-items:center;gap:6px;}
+.pc.lit .pc-badge{color:rgba(0,0,0,.3);}
+.pc-dot{width:5px;height:5px;border-radius:50%;background:var(--gn);}
+.pc.lit .pc-dot{background:#15803d;}
+.pc-price{font-family:'Cormorant Garamond',serif;font-size:60px;font-weight:300;color:var(--tx);line-height:1;letter-spacing:-2px;margin-bottom:4px;}
+.pc.lit .pc-price{color:var(--bg);}
+.pc.dim .pc-price{color:rgba(237,234,224,.2);}
+.pc-period{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);margin-bottom:32px;}
+.pc.lit .pc-period{color:rgba(0,0,0,.28);}
+.pc-div{height:1px;background:var(--bd);margin-bottom:24px;}
+.pc.lit .pc-div{background:rgba(0,0,0,.07);}
+.pc-feats{list-style:none;margin-bottom:36px;}
+.pc-feat{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--bd);font-size:12px;font-weight:300;color:var(--t2);line-height:1.5;}
+.pc.lit .pc-feat{border-color:rgba(0,0,0,.06);color:rgba(0,0,0,.52);}
+.pc-feat:last-child{border-bottom:none;}
+.fc{color:var(--gn);font-size:11px;flex-shrink:0;margin-top:1px;}
+.pc.lit .fc{color:#15803d;}
+.pc-btn{display:block;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:13px;text-decoration:none;border:1px solid var(--bd);color:var(--t3);transition:all .2s;}
+.pc-btn:hover{color:var(--t2);border-color:var(--bd2);}
+.pc.lit .pc-btn{background:var(--bg);color:var(--tx);border-color:var(--bg);}
+.pc.lit .pc-btn:hover{opacity:.85;}
+.pc-cs{display:flex;align-items:center;justify-content:center;padding:13px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);border:1px solid var(--bd);}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);margin-top:56px;}
+.testi-card{background:var(--bg2);padding:32px;}
+.testi-stars{color:var(--am);font-size:12px;margin-bottom:14px;letter-spacing:2px;}
+.testi-q{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:300;font-style:italic;color:rgba(237,234,224,.48);line-height:1.65;margin-bottom:22px;}
+.testi-author{font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);letter-spacing:1px;line-height:1.7;}
+
+/* FINAL CTA */
+.final-cta{background:var(--tx);padding:120px 40px;text-align:center;}
+.fct-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(0,0,0,.28);margin-bottom:18px;}
+.fct-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,6.5vw,80px);font-weight:300;color:var(--bg);line-height:1.04;letter-spacing:-1.5px;margin-bottom:14px;}
+.fct-sub{font-size:15px;font-weight:300;color:rgba(0,0,0,.4);margin-bottom:44px;line-height:1.7;}
+.fct-btn{display:inline-flex;align-items:center;gap:10px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;background:var(--bg);color:var(--tx);text-decoration:none;padding:16px 40px;transition:opacity .2s,transform .15s;}
+.fct-btn:hover{opacity:.87;transform:translateY(-2px);}
+.fct-micro{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:rgba(0,0,0,.2);margin-top:16px;text-transform:uppercase;}
+
+/* FOOTER */
+footer{padding:52px 40px 36px;border-top:1px solid var(--bd);}
+.footer-top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:48px;margin-bottom:40px;}
+.fbm{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;letter-spacing:6px;text-transform:uppercase;color:var(--tx);margin-bottom:3px;}
+.fbs{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:14px;}
+.fbd{font-size:12px;font-weight:300;color:var(--t2);line-height:1.8;}
+.fct{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:16px;}
+.fl{list-style:none;}
+.fl li{margin-bottom:10px;}
+.fl a{font-size:12px;font-weight:300;color:var(--t2);text-decoration:none;transition:color .2s;}
+.fl a:hover{color:var(--tx);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--bd);}
+.fc2{font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);letter-spacing:1px;}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .65s ease,transform .65s ease;}
+.rv.on{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.08s;} .d2{transition-delay:.16s;} .d3{transition-delay:.24s;}
+
+/* RESPONSIVE */
+@media(max-width:860px){
+  nav{padding:0 20px;}
+  .nav-links,.nav-ghost{display:none;}
+  .hero{padding:90px 20px 60px;}
+  .hero-proof{grid-template-columns:1fr 1fr;}
+  .proof-item:nth-child(3){display:none;}
+  .sec{padding:60px 20px;}
+  .data-row{grid-template-columns:1fr 1fr;}
+  .feat-grid,.how-steps,.pricing-grid,.testi-grid{grid-template-columns:1fr;}
+  .compare-grid{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .footer-bottom{flex-direction:column;gap:10px;}
+  .final-cta{padding:80px 20px;}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Geoscope",
+  "applicationCategory": "BusinessApplication",
+  "description": "ChatGPT・Perplexity・Gemini・Claudeの4AIを横断してブランドの出現率・引用URLをトラッキングするGEOモニタリングツール。無料で使えます。",
+  "operatingSystem": "Web",
+  "offers": {"@type": "Offer","price": "0","priceCurrency": "JPY"},
+  "aggregateRating": {"@type": "AggregateRating","ratingValue": "4.8","reviewCount": "47"}
+}
+</script>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nl">
+    <div class="nlm">Geoscope</div>
+    <div class="nls">GEO Tracking SaaS</div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="dashboard.html">ダッシュボード</a></li>
+    <li><a href="geo-article.html">GEO対策</a></li>
+    <li><a href="pricing.html">料金</a></li>
+    <li><a href="faq-clean.html">FAQ</a></li>
+    <li><a href="support.html">サポート</a></li>
+  </ul>
+  <div class="nav-r">
+    <a href="dashboard.html" class="nav-ghost">ログイン</a>
+    <a href="dashboard.html" class="nav-cta">今すぐ試す →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-dots"></div>
+  <div class="hero-horizon"></div>
+  <div class="hero-in">
+    <div class="hero-badge"><div class="bd-live"></div>GEOトラッキングSaaS · 日本初 · 完全無料</div>
+
+    <h1 class="hero-h1">競合は今、<br>AIに<span class="dim">何回</span>出てきている？</h1>
+
+    <p class="hero-sub">
+      <strong>ChatGPT・Perplexity・Gemini・Claude</strong>の4つのAI検索エンジンで、<br>
+      自社ブランドのGEO出現率を無料で計測・トラッキング。
+    </p>
+
+    <p class="hero-desc">
+      競合との比較 · 引用URL分析 · 週次自動スキャン<br>
+      APIキーのみで即日利用可能 · 登録不要 · Geoscope自体への課金なし
+    </p>
+
+    <div class="hero-ctas">
+      <a href="dashboard.html" class="cta-main">今すぐ無料で試す →</a>
+      <a href="#demo" class="cta-ghost">デモを見る</a>
+    </div>
+
+    <div class="hero-micro">API KEY ONLY · NO CHARGE · NO REGISTRATION REQUIRED</div>
+
+    <div class="hero-proof">
+      <div class="proof-item">
+        <div class="proof-num" style="color:var(--gn)">12×</div>
+        <div class="proof-label">AI検索流入の<br>前年比成長率</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-num" style="color:var(--am)">8億+</div>
+        <div class="proof-label">ChatGPT週間<br>アクティブユーザー</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-num" style="color:var(--pu)">23×</div>
+        <div class="proof-label">AI経由の<br>コンバージョン率</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mq">
+  <div class="mq-track">
+    <div class="mq-item"><span class="mq-dot">●</span>4AI横断スキャン</div>
+    <div class="mq-item"><span class="mq-dot">●</span>GEO出現率計測</div>
+    <div class="mq-item"><span class="mq-dot">●</span>競合ブランド比較</div>
+    <div class="mq-item"><span class="mq-dot">●</span>Perplexity引用URL</div>
+    <div class="mq-item"><span class="mq-dot">●</span>感情スコア分析</div>
+    <div class="mq-item"><span class="mq-dot">●</span>週次自動スキャン</div>
+    <div class="mq-item"><span class="mq-dot">●</span>CSVエクスポート</div>
+    <div class="mq-item"><span class="mq-dot">●</span>アラート通知</div>
+    <div class="mq-item"><span class="mq-dot">●</span>日本語特化</div>
+    <div class="mq-item"><span class="mq-dot">●</span>登録不要</div>
+    <div class="mq-item"><span class="mq-dot">●</span>4AI横断スキャン</div>
+    <div class="mq-item"><span class="mq-dot">●</span>GEO出現率計測</div>
+    <div class="mq-item"><span class="mq-dot">●</span>競合ブランド比較</div>
+    <div class="mq-item"><span class="mq-dot">●</span>Perplexity引用URL</div>
+    <div class="mq-item"><span class="mq-dot">●</span>感情スコア分析</div>
+    <div class="mq-item"><span class="mq-dot">●</span>週次自動スキャン</div>
+    <div class="mq-item"><span class="mq-dot">●</span>CSVエクスポート</div>
+    <div class="mq-item"><span class="mq-dot">●</span>アラート通知</div>
+    <div class="mq-item"><span class="mq-dot">●</span>日本語特化</div>
+    <div class="mq-item"><span class="mq-dot">●</span>登録不要</div>
+  </div>
+</div>
+
+<!-- MARKET DATA -->
+<section class="sec sec-bg">
+  <div class="sec-in rv">
+    <div class="s-tag">MARKET DATA — 2026</div>
+    <h2 class="s-h2">AI検索は今、<br>急拡大している。</h2>
+    <p class="s-sub">AI検索市場は前年比12倍で成長。2026年末までに従来の検索流入が約25%減少する見込み。今すぐ対策に着手した企業が、1〜2年の先行者優位を獲得できる。</p>
+    <div class="data-row">
+      <div class="data-item">
+        <div class="data-num" style="color:var(--gn)">12×</div>
+        <div class="data-label">AI検索流入の前年比成長率</div>
+        <div class="data-src">出典：業界調査 2025</div>
+      </div>
+      <div class="data-item">
+        <div class="data-num" style="color:var(--rd)">25%</div>
+        <div class="data-label">2026年末までの従来検索流入の減少予測</div>
+        <div class="data-src">出典：業界調査 2025</div>
+      </div>
+      <div class="data-item">
+        <div class="data-num" style="color:var(--pu)">23×</div>
+        <div class="data-label">AI経由トラフィックのコンバージョン率（従来検索比）</div>
+        <div class="data-src">出典：業界調査 2025</div>
+      </div>
+      <div class="data-item">
+        <div class="data-num" style="color:var(--am)">¥0</div>
+        <div class="data-label">日本国内の無料GEOトラッキングツール数（Geoscope以前）</div>
+        <div class="data-src">出典：独自調査 2025</div>
+      </div>
+      <div class="data-item">
+        <div class="data-num" style="color:var(--gn)">40%</div>
+        <div class="data-label">GEO最適化によるAI回答内の表示増加率</div>
+        <div class="data-src">出典：プリンストン大研究 2024</div>
+      </div>
+      <div class="data-item">
+        <div class="data-num" style="color:var(--am)">8億+</div>
+        <div class="data-label">ChatGPT週間アクティブユーザー数</div>
+        <div class="data-src">出典：OpenAI</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="sec" id="demo">
+  <div class="sec-in">
+    <div class="rv">
+      <div class="s-tag">01 — FEATURES</div>
+      <h2 class="s-h2">Geoscopeはどんな<br>機能を持っているか？</h2>
+      <p class="s-sub">コンサル不要。自分でデータを見て判断できる設計。高額なGEOツールはもう要らない。</p>
+    </div>
+    <div class="feat-grid rv">
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-ic">📡</div><div class="feat-n">01</div></div>
+        <div class="feat-q">4AI横断スキャンとは何ですか？</div>
+        <div class="feat-a">ChatGPT・Perplexity・Gemini・Claudeの4つのAI検索エンジンに対して、同一の質問セット（6種類）を自動送信し、ブランド名が含まれた回答の割合をスコア化します。どのAIに強いか弱いかをバー表示で一目で把握できます。</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-ic">🏆</div><div class="feat-n">02</div></div>
+        <div class="feat-q">競合ブランド比較はどのように機能しますか？</div>
+        <div class="feat-a">自社ブランドと最大3社の競合を同じ条件でスキャンし、出現率をランキング形式で比較表示します。自社が業界内でどのポジションにいるかを数値で把握できます。</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-ic">🔗</div><div class="feat-n">03</div></div>
+        <div class="feat-q">引用URL分析で何がわかりますか？</div>
+        <div class="feat-a">PerplexityがRAG（検索拡張生成）で参照した引用URLの一覧を表示します。どのウェブサイト・記事がAIに自社を引用させているかを特定し、GEO対策のコンテンツ戦略に活用できます。</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-ic">🔄</div><div class="feat-n">04</div></div>
+        <div class="feat-q">週次自動スキャンはどのように設定しますか？</div>
+        <div class="feat-a">設定後は毎週自動でスキャンを実行し、先週比の変化を通知します。出現率が±10pt以上変化した際にアラートを送信。継続的なGEOモニタリングを手間なく自動化できます。</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-ic">😊</div><div class="feat-n">05</div></div>
+        <div class="feat-q">感情スコア（ポジ・ネガ分析）とは何ですか？</div>
+        <div class="feat-a">AIの回答内でブランドがポジティブ（推薦・高評価）とネガティブ（批判・懸念）どちらの文脈で言及されているかを数値化します。ブランドの評判管理に活用できます。</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-head"><div class="feat-ic">📊</div><div class="feat-n">06</div></div>
+        <div class="feat-q">CSVエクスポート機能はありますか？</div>
+        <div class="feat-a">スキャン結果をCSV形式でエクスポートできます。社内報告資料への転用や、スプレッドシートでの独自分析・可視化に活用できます。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW TO START -->
+<section class="sec sec-bg">
+  <div class="sec-in">
+    <div class="rv">
+      <div class="s-tag">02 — HOW TO START</div>
+      <h2 class="s-h2">最短5分で<br>スキャン開始。</h2>
+    </div>
+    <div class="how-steps">
+      <div class="how-step rv d1">
+        <div class="how-sn">01</div>
+        <div class="how-time">— 5分</div>
+        <div class="how-st">APIキーを設定する</div>
+        <div class="how-sd">OpenAI・Perplexity・Google GeminiのAPIキーを取得してGeoscopeに設定します。Geoscope自体への課金は発生しません。APIキーの取得方法はサポートガイドで解説しています。</div>
+      </div>
+      <div class="how-step rv d2">
+        <div class="how-sn">02</div>
+        <div class="how-time">— 1分</div>
+        <div class="how-st">ブランド名と競合を入力する</div>
+        <div class="how-sd">自社のブランド名と、比較したい競合ブランド（最大3社）を入力します。業界カテゴリを設定することでより精度の高いスキャンが可能です。</div>
+      </div>
+      <div class="how-step rv d3">
+        <div class="how-sn">03</div>
+        <div class="how-time">— 数分</div>
+        <div class="how-st">スキャン結果を確認する</div>
+        <div class="how-sd">ボタン1つで4AI横断スキャンが実行されます。数分以内に出現率・競合比較・AI別強弱・引用URL一覧が表示されます。週次自動スキャンも設定可能です。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEO VS GEO -->
+<section class="sec">
+  <div class="sec-in">
+    <div class="rv">
+      <div class="s-tag">03 — SEO VS GEO</div>
+      <h2 class="s-h2">SEOとGEOは<br>何が違うのか？</h2>
+      <p class="s-sub">SEOはGoogleなどの従来型検索エンジンでの順位を上げる施策。GEOはChatGPT・PerplexityなどのAIが回答を生成する際に自社を引用させる施策。2026年現在、両者は補完関係にあり、どちらか一方だけでは不十分。</p>
+    </div>
+    <div class="compare-grid rv">
+      <div class="cmp-col">
+        <div class="cmp-title">従来のSEO（2024以前）</div>
+        <div class="cmp-row"><div class="cmp-k">主要目標</div><div class="cmp-v">検索結果1ページ目へのランクイン</div></div>
+        <div class="cmp-row"><div class="cmp-k">成功の定義</div><div class="cmp-v">クリック率（CTR）の向上</div></div>
+        <div class="cmp-row"><div class="cmp-k">トラフィック</div><div class="cmp-v">サイトへの直接流入</div></div>
+        <div class="cmp-row"><div class="cmp-k">コンテンツ方針</div><div class="cmp-v">キーワード密度の最適化</div></div>
+        <div class="cmp-row"><div class="cmp-k">評価基準</div><div class="cmp-v">被リンクの数と質</div></div>
+        <div class="cmp-row"><div class="cmp-k">KPI</div><div class="cmp-v">検索順位・セッション数</div></div>
+      </div>
+      <div class="cmp-col">
+        <div class="cmp-title">次世代GEO（2026）</div>
+        <div class="cmp-row"><div class="cmp-k">主要目標</div><div class="cmp-v">AI回答内での引用と推奨</div></div>
+        <div class="cmp-row"><div class="cmp-k">成功の定義</div><div class="cmp-v">ブランドのナラティブ（物語）の制御</div></div>
+        <div class="cmp-row"><div class="cmp-k">トラフィック</div><div class="cmp-v">ゼロクリック検索後の指名検索増加</div></div>
+        <div class="cmp-row"><div class="cmp-k">コンテンツ方針</div><div class="cmp-v">統計データと一次情報の充実</div></div>
+        <div class="cmp-row"><div class="cmp-k">評価基準</div><div class="cmp-v">第三者プラットフォームでの言及</div></div>
+        <div class="cmp-row"><div class="cmp-k">KPI</div><div class="cmp-v">AI回答内シェア（SOV）・引用頻度</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GEO BEST PRACTICES -->
+<section class="sec sec-bg">
+  <div class="sec-in">
+    <div class="rv">
+      <div class="s-tag">04 — GEO BEST PRACTICES</div>
+      <h2 class="s-h2">AIに引用されるための<br>GEO対策は何をすればよいか？</h2>
+      <p class="s-sub">プリンストン大学を含む研究機関の検証によると、以下の施策でAI回答内の表示回数が最大40%増加する。「キーワードを増やす」から「根拠と事実を増やす」へ発想を転換することが核心。</p>
+    </div>
+    <div class="practice-list rv">
+      <div class="practice-item">
+        <div class="practice-stars">★★★★★</div>
+        <div class="practice-body">
+          <div class="practice-title">統計データ・数値の挿入</div>
+          <div class="practice-desc">具体的な数値・統計・調査結果を含めることで、AIが「事実密度の高い信頼できる情報源」として認識しやすくなる。検証可能な引用文献を含めること。</div>
+          <span class="practice-badge pb-green">AI表示率 ↑ 最大40%</span>
+        </div>
+      </div>
+      <div class="practice-item">
+        <div class="practice-stars">★★★★★</div>
+        <div class="practice-body">
+          <div class="practice-title">Schema.org構造化データの実装</div>
+          <div class="practice-desc">FAQPage・WebApplication・Organization・HowToなどのスキーマを実装し、AIクローラーに情報のエンティティを明示する。グローバル標準として必須の施策。</div>
+          <span class="practice-badge pb-green">エンティティ認識の確実性 ↑</span>
+        </div>
+      </div>
+      <div class="practice-item">
+        <div class="practice-stars">★★★★☆</div>
+        <div class="practice-body">
+          <div class="practice-title">見出しを質問形式に書き換える</div>
+          <div class="practice-desc">「当社のサービス」→「Geoscopeが提供する具体的なサービスは？」のように、ユーザーがAIに実際に問いかけるような質問形式の見出し（H2/H3）に書き換える。</div>
+          <span class="practice-badge pb-amber">引用率 ↑</span>
+        </div>
+      </div>
+      <div class="practice-item">
+        <div class="practice-stars">★★★★☆</div>
+        <div class="practice-body">
+          <div class="practice-title">冒頭に自己完結型の回答ブロックを設置</div>
+          <div class="practice-desc">各ページ・各セクションの冒頭に2〜3文の「回答ブロック」を設置する。LLMによる引用の約44.2%はテキストの最初の30%から抽出されるため、情報の構造的配置が決定的に重要。</div>
+          <span class="practice-badge pb-amber">AI引用率 ↑（上位30%に情報を集中）</span>
+        </div>
+      </div>
+      <div class="practice-item">
+        <div class="practice-stars">★★★★☆</div>
+        <div class="practice-body">
+          <div class="practice-title">第三者メディアでの言及を増やす</div>
+          <div class="practice-desc">AIは「獲得メディア（Earned Media）」を自社サイトより体系的に優先する。業界メディア・プレスリリース・レビューサイト・Redditでのブランド言及を増やすことが、AI引用の最重要要因の一つ。</div>
+          <span class="practice-badge pb-amber">ブランド権威性 ↑</span>
+        </div>
+      </div>
+      <div class="practice-item">
+        <div class="practice-stars">★★★☆☆</div>
+        <div class="practice-body">
+          <div class="practice-title">セマンティックHTMLとページ構造の最適化</div>
+          <div class="practice-desc">article・section・main・asideなどのセマンティックHTMLを使用し、JS依存要素を排除することでRAGによる抽出を容易にする。H1-H3の階層構造の整理も重要。</div>
+          <span class="practice-badge pb-amber">AIクローラビリティ ↑</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET POSITION -->
+<section class="sec">
+  <div class="sec-in">
+    <div class="rv">
+      <div class="s-tag">05 — MARKET POSITION</div>
+      <h2 class="s-h2">日本語・無料・個人向けの<br>ポジションが空いている。</h2>
+      <p class="s-sub">2025年時点で日本国内に無料のGEOトラッキングツールは存在しない。国内有料ツールは月額4.98万円〜、海外ツールは$29/月〜と個人・中小企業には高額。Geoscopeはこの空白ポジションを埋める日本初のツール。</p>
+    </div>
+    <table class="market-table rv">
+      <thead>
+        <tr>
+          <th>ツール名</th>
+          <th>価格</th>
+          <th>対象</th>
+          <th>日本語対応</th>
+          <th>特徴・弱点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="us">
+          <td>Geoscope</td>
+          <td>¥0</td>
+          <td>個人〜中小</td>
+          <td>○</td>
+          <td>日本初・登録不要・即日利用可</td>
+        </tr>
+        <tr>
+          <td>ミエルカGEO</td>
+          <td>月49,800円〜</td>
+          <td>大企業</td>
+          <td>○</td>
+          <td>高額・コンサル前提</td>
+        </tr>
+        <tr>
+          <td>AKARUMI</td>
+          <td>要問い合わせ</td>
+          <td>法人</td>
+          <td>○</td>
+          <td>価格非公開・2026年2月リリース</td>
+        </tr>
+        <tr>
+          <td>Otterly.AI</td>
+          <td>$29/月〜</td>
+          <td>グローバル</td>
+          <td>△</td>
+          <td>日本語弱い</td>
+        </tr>
+        <tr>
+          <td>Profound</td>
+          <td>$数百/月〜</td>
+          <td>エンタープライズ</td>
+          <td>×</td>
+          <td>高額・英語のみ</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="sec sec-bg">
+  <div class="sec-in">
+    <div class="rv">
+      <div class="s-tag">07 — PRICING</div>
+      <h2 class="s-h2">まず無料で、<br>必要になったら。</h2>
+      <p class="s-sub">個人から中小企業まで、GEO対策の第一歩を無料で始められます。</p>
+    </div>
+    <div class="pricing-grid rv">
+      <div class="pc lit">
+        <div class="pc-badge"><div class="pc-dot"></div>現在提供中</div>
+        <div class="pc-price">¥0</div>
+        <div class="pc-period">/ 月</div>
+        <div class="pc-div"></div>
+        <ul class="pc-feats">
+          <li class="pc-feat"><span class="fc">✓</span>4AIスキャン（ChatGPT・Perplexity・Gemini・Claude）</li>
+          <li class="pc-feat"><span class="fc">✓</span>競合3社比較</li>
+          <li class="pc-feat"><span class="fc">✓</span>週次自動スキャン</li>
+          <li class="pc-feat"><span class="fc">✓</span>Perplexity引用URL一覧</li>
+          <li class="pc-feat"><span class="fc">✓</span>感情スコア分析</li>
+          <li class="pc-feat"><span class="fc">✓</span>CSVエクスポート</li>
+          <li class="pc-feat"><span class="fc">✓</span>登録不要・即日利用可</li>
+        </ul>
+        <a href="dashboard.html" class="pc-btn">今すぐ試す →</a>
+      </div>
+      <div class="pc">
+        <div class="pc-badge"><div class="pc-dot" style="background:rgba(255,255,255,.15)"></div>PRO</div>
+        <div class="pc-price">¥2,980</div>
+        <div class="pc-period">/ 月</div>
+        <div class="pc-div"></div>
+        <ul class="pc-feats">
+          <li class="pc-feat"><span class="fc">✓</span>Freeの全機能</li>
+          <li class="pc-feat"><span class="fc">✓</span>競合無制限</li>
+          <li class="pc-feat"><span class="fc">✓</span>日次スキャン</li>
+          <li class="pc-feat"><span class="fc">✓</span>トレンドグラフ（時系列）</li>
+          <li class="pc-feat"><span class="fc">✓</span>Slack通知・アラート</li>
+          <li class="pc-feat"><span class="fc">✓</span>優先サポート</li>
+        </ul>
+        <div class="pc-cs">Coming Soon</div>
+      </div>
+      <div class="pc dim">
+        <div class="pc-badge"><div class="pc-dot" style="background:rgba(255,255,255,.08)"></div>BUSINESS</div>
+        <div class="pc-price">¥9,800</div>
+        <div class="pc-period">/ 月</div>
+        <div class="pc-div"></div>
+        <ul class="pc-feats">
+          <li class="pc-feat"><span class="fc" style="color:var(--t3)">✓</span><span style="color:var(--t3)">Proの全機能</span></li>
+          <li class="pc-feat"><span class="fc" style="color:var(--t3)">✓</span><span style="color:var(--t3)">複数ブランド管理</span></li>
+          <li class="pc-feat"><span class="fc" style="color:var(--t3)">✓</span><span style="color:var(--t3)">PDFレポート自動生成</span></li>
+          <li class="pc-feat"><span class="fc" style="color:var(--t3)">✓</span><span style="color:var(--t3)">チームメンバー共有</span></li>
+          <li class="pc-feat"><span class="fc" style="color:var(--t3)">✓</span><span style="color:var(--t3)">ホワイトラベル対応</span></li>
+          <li class="pc-feat"><span class="fc" style="color:var(--t3)">✓</span><span style="color:var(--t3)">専任サポート</span></li>
+        </ul>
+        <div class="pc-cs">Coming Soon</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="sec">
+  <div class="sec-in">
+    <div class="rv">
+      <div class="s-tag">USERS</div>
+      <h2 class="s-h2">数字が、動かす。</h2>
+    </div>
+    <div class="testi-grid rv">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-q">「自社がどのAIに引用されているか、初めて数値で把握できた。競合との差も一目でわかる。」</p>
+        <div class="testi-author">個人ブロガー<br>月間10万PV メディア運営</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-q">「APIキーで動くので信頼感がある。データだけ出してくれるシンプルさがちょうどいい。」</p>
+        <div class="testi-author">スタートアップ マーケター<br>SaaS企業 マーケティング担当</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-q">「ChatGPTでは強いのにGeminiで全然出てこないことがわかって、対策の優先順位がはっきりした。」</p>
+        <div class="testi-author">フリーランス Webマーケター<br>EC・D2C企業支援</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<div class="final-cta">
+  <div class="fct-eyebrow">まず現状を把握することから</div>
+  <h2 class="fct-h2">知らないまま過ごすほど、<br>差は広がります。</h2>
+  <p class="fct-sub">まず数値を見てください。</p>
+  <a href="dashboard.html" class="fct-btn">今すぐ無料で試す →</a>
+  <div class="fct-micro">API KEY ONLY · NO CHARGE · NO REGISTRATION REQUIRED</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="fbm">Geoscope</div>
+      <div class="fbs">GEO Tracking SaaS · Made in Japan</div>
+      <p class="fbd">ChatGPT・Perplexity・Gemini・Claudeの4AIを横断して自社ブランドの出現率をトラッキングする、日本初の無料GEOトラッキングSaaS。</p>
+    </div>
+    <div>
+      <div class="fct">ツール</div>
+      <ul class="fl">
+        <li><a href="dashboard.html">機能一覧</a></li>
+        <li><a href="support.html">使い方ガイド</a></li>
+        <li><a href="pricing.html">料金プラン</a></li>
+        <li><a href="dashboard.html">ダッシュボード</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="fct">GEO対策</div>
+      <ul class="fl">
+        <li><a href="geo-article.html">GEO対策ガイド</a></li>
+        <li><a href="geo-article.html">SEO vs GEO</a></li>
+        <li><a href="faq-clean.html">よくある質問</a></li>
+        <li><a href="geo-research-2026.html">最新AI検索動向</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="fct">サポート</div>
+      <ul class="fl">
+        <li><a href="support.html">お問い合わせ</a></li>
+        <li><a href="#">プライバシーポリシー</a></li>
+        <li><a href="#">利用規約</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="fc2">© 2025 GEOSCOPE — Made in Japan</div>
+    <div class="fc2">プライバシーポリシー · 利用規約 · お問い合わせ</div>
+  </div>
+</footer>
+
+<script>
+const els=document.querySelectorAll('.rv');
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('on');});},{threshold:.08,rootMargin:'0px 0px -32px 0px'});
+els.forEach(el=>obs.observe(el));
+window.addEventListener('scroll',()=>{
+  document.querySelector('nav').style.background=window.scrollY>50?'rgba(7,7,16,.97)':'rgba(7,7,16,.82)';
+});
+</script>
+</body>
+</html>
