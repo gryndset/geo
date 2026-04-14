@@ -199,13 +199,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
   </a>
   <ul class="nav-links">
     <li><a href="dashboard.html" class="active">ダッシュボード</a></li>
+    <li><a href="brands.html">ブランド</a></li>
+    <li><a href="alerts.html">アラート</a></li>
     <li><a href="geo-article.html">GEO対策</a></li>
     <li><a href="pricing.html">料金</a></li>
-    <li><a href="faq-clean.html">FAQ</a></li>
     <li><a href="support.html">サポート</a></li>
   </ul>
   <div class="nav-r">
-    <span class="nav-badge">● FREE PLAN</span>
+    <span id="nav-plan-badge" class="nav-badge">● FREE PLAN</span>
+    <a href="settings.html" style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--t3);text-decoration:none;padding:6px 12px;border:1px solid var(--bd);">設定</a>
+    <button onclick="gsAuth.logout()" style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;padding:6px 12px;border:1px solid var(--bd);color:var(--t3);background:transparent;cursor:pointer;">ログアウト</button>
   </div>
 </nav>
 
@@ -654,6 +657,17 @@ function openKeyPanel() {
         キーはブラウザのlocalStorageに保存されます。サーバーには送信されません。
       </div>
     </div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--bd);">
+      <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:10px;">通知メール</div>
+      <div style="display:flex;gap:6px;">
+        <input id="notify-email" type="email" placeholder="通知先メールアドレス"
+          value="${localStorage.getItem('gs_notify_email')||''}"
+          style="flex:1;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Mono',monospace;font-size:10px;padding:8px 10px;outline:none;">
+        <button onclick="localStorage.setItem('gs_notify_email',document.getElementById('notify-email').value);showToast('保存しました','ok')"
+          style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;padding:8px 12px;background:var(--tx);color:var(--bg);border:none;cursor:pointer;">保存</button>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);margin-top:6px;line-height:1.6;">スキャン完了時と週次レポートを送信</div>
+    </div>
     <a href="support.html" style="display:block;margin-top:12px;font-family:'DM Mono',monospace;font-size:8px;color:var(--pu);letter-spacing:1px;text-decoration:none;">APIキーの取得方法 →</a>
   `;
   document.body.appendChild(panel);
@@ -866,6 +880,16 @@ window.runScan = async function() {
     saveHistory(data);
     renderHistory();
     showToast('スキャン完了！', 'ok');
+
+    // メール通知（設定されている場合）
+    const notifyEmail = localStorage.getItem('gs_notify_email');
+    if(notifyEmail){
+      fetch('/api/report',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({type:'scan_complete',email:notifyEmail,scanData:data})
+      }).catch(()=>{});
+    }
   } catch (e) {
     showToast('エラー: ' + e.message, 'error');
   } finally {
@@ -874,5 +898,7 @@ window.runScan = async function() {
   }
 };
 </script>
+<script src="/themes.js"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>{initTheme();mountThemeButton();});</script>
 </body>
 </html>

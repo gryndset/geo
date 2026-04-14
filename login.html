@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="canonical" href="https://geoscope.jp/login.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ログイン — Geoscope</title>
+<meta name="description" content="Geoscopeにログインして、AIでのブランド出現率をトラッキングしましょう。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#070710;--bg2:#0b0b1c;--sf:#10101f;--bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.12);--tx:#edeae0;--t2:rgba(237,234,224,.52);--t3:rgba(237,234,224,.22);--gn:#3ddc84;--am:#f0b429;--rd:#ef6060;--pu:#8b7cf8;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;}
+.page{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.card{width:100%;max-width:400px;background:var(--bg2);border:1px solid var(--bd);padding:48px 40px;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;letter-spacing:8px;text-transform:uppercase;text-align:center;margin-bottom:8px;}
+.logo-sub{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;text-align:center;margin-bottom:40px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;margin-bottom:28px;}
+.field{margin-bottom:16px;}
+.field-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:6px;}
+.field-input{width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 14px;outline:none;transition:border-color .2s;}
+.field-input:focus{border-color:var(--pu);}
+.field-input.error{border-color:var(--rd);}
+.btn-primary{width:100%;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:14px;background:var(--tx);color:var(--bg);border:none;cursor:pointer;margin-top:8px;transition:opacity .2s;}
+.btn-primary:hover{opacity:.87;}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+.err-msg{font-family:'DM Mono',monospace;font-size:9px;color:var(--rd);margin-top:12px;letter-spacing:.5px;display:none;}
+.divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:var(--t3);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--bd);}
+.link-row{text-align:center;font-size:12px;color:var(--t3);margin-top:20px;}
+.link-row a{color:var(--pu);text-decoration:none;}
+.link-row a:hover{text-decoration:underline;}
+.forgot{text-align:right;margin-top:-8px;margin-bottom:16px;}
+.forgot a{font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);text-decoration:none;letter-spacing:1px;}
+.forgot a:hover{color:var(--t2);}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="card">
+    <div class="logo">Geoscope</div>
+    <div class="logo-sub">GEO Tracking SaaS</div>
+    <div class="card-title">ログイン</div>
+
+    <div class="field">
+      <div class="field-label">メールアドレス</div>
+      <input id="email" class="field-input" type="email" placeholder="hello@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <div class="field-label">パスワード</div>
+      <input id="password" class="field-input" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div class="forgot"><a href="reset-password.html">パスワードを忘れた方</a></div>
+
+    <button class="btn-primary" id="login-btn" onclick="doLogin()">ログイン →</button>
+    <div class="err-msg" id="err-msg"></div>
+
+    <div class="link-row">アカウントをお持ちでない方は <a href="signup.html">新規登録</a></div>
+    <div class="link-row" style="margin-top:8px;"><a href="index.html">← トップへ戻る</a></div>
+  </div>
+</div>
+
+<script src="/gs-client.js"></script>
+<script src="/themes.js"></script>
+<script>
+// ログイン済みなら飛ばす
+if (gsIsLoggedIn()) window.location.href = '/dashboard.html';
+initTheme();
+
+async function doLogin() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('err-msg');
+
+  if (!email || !password) { showErr('メールとパスワードを入力してください'); return; }
+
+  btn.textContent = 'ログイン中...'; btn.disabled = true; err.style.display = 'none';
+  try {
+    await gsAuth.login(email, password);
+    const redirect = sessionStorage.getItem('gs_redirect') || '/dashboard.html';
+    sessionStorage.removeItem('gs_redirect');
+    window.location.href = redirect;
+  } catch (e) {
+    showErr(e.message);
+    btn.textContent = 'ログイン →'; btn.disabled = false;
+  }
+}
+
+function showErr(msg) {
+  const err = document.getElementById('err-msg');
+  err.textContent = msg; err.style.display = 'block';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+</script>
+</body>
+</html>

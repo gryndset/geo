@@ -343,7 +343,41 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
           <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;">内容</div>
           <textarea rows="5" placeholder="具体的にお書きください" style="width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 14px;outline:none;resize:vertical;"></textarea>
         </div>
-        <button style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 28px;background:var(--tx);color:var(--bg);border:none;cursor:pointer;">送信する →</button>
+        <button id="contact-submit" onclick="submitContact()" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 28px;background:var(--tx);color:var(--bg);border:none;cursor:pointer;">送信する →</button>
+<div id="contact-msg" style="margin-top:12px;font-family:'DM Mono',monospace;font-size:10px;display:none;"></div>
+<script>
+async function submitContact(){
+  const btn = document.getElementById('contact-submit');
+  const msg = document.getElementById('contact-msg');
+  const name = document.querySelector('input[placeholder="山田 太郎"]').value.trim();
+  const email = document.querySelector('input[type="email"]').value.trim();
+  const type = document.querySelector('select').value;
+  const message = document.querySelector('textarea').value.trim();
+  if(!name||!email||!message){
+    msg.style.display='block';msg.style.color='var(--rd)';msg.textContent='名前・メール・内容を入力してください';return;
+  }
+  btn.textContent='送信中...';btn.disabled=true;
+  try{
+    const resp = await fetch('/api/contact',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,email,type,message})
+    });
+    const data = await resp.json();
+    if(resp.ok){
+      msg.style.display='block';msg.style.color='var(--gn)';
+      msg.textContent='送信しました。確認メールをお送りしました。';
+      btn.style.display='none';
+    } else {
+      throw new Error(data.error||'送信失敗');
+    }
+  }catch(e){
+    msg.style.display='block';msg.style.color='var(--rd)';
+    msg.textContent='エラー: '+e.message;
+    btn.textContent='送信する →';btn.disabled=false;
+  }
+}
+</script>
       </div>
     </section>
 
@@ -363,5 +397,7 @@ window.addEventListener('scroll',()=>{
   tocItems.forEach(t=>{t.classList.toggle('active',t.getAttribute('href')==='#'+current);});
 });
 </script>
+<script src="/themes.js"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>{initTheme();mountThemeButton();});</script>
 </body>
 </html>

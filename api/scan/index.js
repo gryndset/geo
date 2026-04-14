@@ -290,3 +290,39 @@ function chunkArray(arr, size) {
   for (let i = 0; i < arr.length; i += size) chunks.push(arr.slice(i, i + size));
   return chunks;
 }
+
+// ===== DB保存（認証済みユーザー向け） =====
+// このエンドポイントはapi/scan?action=saveで呼ぶ
+export async function saveScanToDB(userId, brandId, brandName, scanData) {
+  const { createServerClient } = await import('../../lib/supabase.js');
+  const supabase = createServerClient();
+
+  const { data: saved, error } = await supabase.from('scans').insert({
+    user_id: userId,
+    brand_id: brandId || null,
+    brand_name: brandName,
+    avg_rate: scanData.summary.avgRate,
+    rate_chatgpt:    scanData.summary.byAI.chatgpt,
+    rate_perplexity: scanData.summary.byAI.perplexity,
+    rate_gemini:     scanData.summary.byAI.gemini,
+    rate_claude:     scanData.summary.byAI.claude,
+    total_citations: scanData.summary.totalCitations,
+    raw_data: scanData,
+  }).select().single();
+
+  if (error) throw new Error(error.message);
+
+  // 引用URLを保存
+  if (saved && scanData.summary.citations?.length > 0) {
+    const citationRows = scanData.summary.citations.slice(0, 50).map(c => ({
+      scan_id: saved.id,
+      url: c.url,
+      domain: c.domain,
+      mention_count: c.count || 1,
+      ai_source: 'perplexity',
+    }));
+    await supabase.from('citations').insert(citationRows).catch(() => {});
+  }
+
+  return saved;
+}

@@ -3,12 +3,15 @@
   "builds": [
     { "src": "api/**/*.js", "use": "@vercel/node" },
     { "src": "*.html", "use": "@vercel/static" },
+    { "src": "gs-client.js", "use": "@vercel/static" },
+    { "src": "themes.js", "use": "@vercel/static" },
     { "src": "*.xml", "use": "@vercel/static" },
-    { "src": "*.txt", "use": "@vercel/static" },
-    { "src": "*.json", "use": "@vercel/static" }
+    { "src": "*.txt", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/gs-client.js", "dest": "/gs-client.js" },
+    { "src": "/themes.js", "dest": "/themes.js" },
     { "src": "/", "dest": "/index.html" },
     { "src": "/(.*\\.html)", "dest": "/$1" },
     { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
@@ -17,27 +20,30 @@
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/404.html", "status": 404 }
   ],
+  "crons": [
+    { "path": "/api/cron", "schedule": "0 9 * * 1" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
         { "key": "X-XSS-Protection", "value": "1; mode=block" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     },
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store" }
-      ]
-    },
-    {
-      "source": "/(.*\\.html)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
-      ]
-    }
-  ]
+    { "source": "/api/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store" }] },
+    { "source": "/(.*\\.html)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }] }
+  ],
+  "env": {
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key",
+    "SUPABASE_SERVICE_KEY": "@supabase_service_key",
+    "RESEND_API_KEY": "@resend_api_key",
+    "CONTACT_TO_EMAIL": "@contact_to_email",
+    "CRON_SECRET": "@cron_secret",
+    "SITE_URL": "@site_url",
+    "ADMIN_EMAIL": "@admin_email"
+  }
 }
