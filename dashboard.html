@@ -2,8 +2,10 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/gs-design.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap">
 <link rel="canonical" href="https://geoscope.jp/dashboard.html">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -192,23 +194,33 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="nl">
-    <div class="nlm">Geoscope</div>
-    <div class="nls">GEO Tracking SaaS</div>
-  </a>
-  <ul class="nav-links">
-    <li><a href="dashboard.html" class="active">ダッシュボード</a></li>
-    <li><a href="brands.html">ブランド</a></li>
-    <li><a href="alerts.html">アラート</a></li>
-    <li><a href="geo-article.html">GEO対策</a></li>
-    <li><a href="pricing.html">料金</a></li>
-    <li><a href="support.html">サポート</a></li>
-  </ul>
-  <div class="nav-r">
-    <span id="nav-plan-badge" class="nav-badge">● FREE PLAN</span>
-    <a href="settings.html" style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--t3);text-decoration:none;padding:6px 12px;border:1px solid var(--bd);">設定</a>
-    <button onclick="gsAuth.logout()" style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;padding:6px 12px;border:1px solid var(--bd);color:var(--t3);background:transparent;cursor:pointer;">ログアウト</button>
+<!-- Ambient Glow -->
+<div class="gs-glow gs-glow-1"></div>
+<div class="gs-glow gs-glow-2"></div>
+
+<nav class="gs-nav">
+  <div style="display:flex;align-items:center;gap:28px;">
+    <a href="index.html" class="gs-nav-logo">
+      <div class="gs-nav-logo-dot"></div>
+      <span class="gs-nav-brand">Geoscope</span>
+    </a>
+    <ul class="gs-nav-links">
+      <li><a href="dashboard.html" class="active">Dashboard</a></li>
+      <li><a href="brands.html">Brands</a></li>
+      <li><a href="alerts.html">Alerts</a></li>
+      <li><a href="geo-article.html">GEO対策</a></li>
+      <li><a href="pricing.html">料金</a></li>
+    </ul>
+  </div>
+  <div class="gs-nav-right">
+    <div class="gs-status-pill">
+      <div class="gs-status-dot"></div>
+      System Online
+    </div>
+    <div style="width:1px;height:14px;background:var(--divider);margin:0 4px;"></div>
+    <span id="nav-user" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--t3);"></span>
+    <a href="settings.html" class="gs-btn gs-btn-ghost" style="padding:6px 12px;font-size:12px;">設定</a>
+    <button onclick="gsAuth ? gsAuth.logout() : (localStorage.clear(), location.href='/login.html')" class="gs-btn gs-btn-ghost" style="padding:6px 12px;font-size:12px;">Logout</button>
   </div>
 </nav>
 
@@ -260,10 +272,27 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
         <div class="scan-group">
           <div class="scan-field-label">ブランド名</div>
           <input class="scan-input" type="text" placeholder="例：株式会社〇〇 / ブランド名" id="brand-input">
+          <!-- B-03修正: ログイン済みの場合にブランドセレクターを表示 -->
+          <select class="scan-input" id="brand-selector" style="display:none;margin-top:4px;font-size:10px;" onchange="onBrandSelect(this.value)">
+            <option value="">── ブランドに紐づけない ──</option>
+          </select>
         </div>
         <div class="scan-group">
           <div class="scan-field-label">競合ブランド（任意・カンマ区切り）</div>
           <input class="scan-input" type="text" placeholder="例：競合A, 競合B" id="comp-input">
+        </div>
+        <div class="scan-group" style="max-width:140px;">
+          <div class="scan-field-label">業種</div>
+          <select class="scan-input" id="industry-input" style="appearance:none;cursor:pointer;">
+            <option value="general">汎用</option>
+            <option value="saas">SaaS</option>
+            <option value="ec">EC・通販</option>
+            <option value="restaurant">飲食店</option>
+            <option value="consulting">コンサル</option>
+            <option value="media">メディア</option>
+            <option value="healthcare">医療・健康</option>
+            <option value="education">教育</option>
+          </select>
         </div>
         <button class="scan-btn" onclick="runScan()">スキャン実行 →</button>
       </div>
@@ -674,18 +703,12 @@ function openKeyPanel() {
 }
 
 // ========== Toast ==========
+// B-12修正: showToast() を削除して gsToast() に統一
+// gs-client.js の gsToast() を使用するためのエイリアス
 function showToast(msg, type = 'ok') {
-  const colors = { ok: 'var(--gn)', warn: 'var(--am)', error: 'var(--rd)' };
-  const t = document.createElement('div');
-  t.style.cssText = `
-    position:fixed;bottom:24px;right:24px;z-index:9998;
-    background:var(--bg2);border:1px solid ${colors[type]};
-    color:var(--tx);font-family:'DM Mono',monospace;font-size:10px;
-    letter-spacing:1px;padding:12px 20px;max-width:300px;line-height:1.5;
-  `;
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3500);
+  if (typeof gsToast === 'function') {
+    gsToast(msg, type);
+  }
 }
 
 // ========== スキャン履歴 ==========
@@ -792,6 +815,25 @@ function hideProgress() {
 
 // ========== 初期化 ==========
 document.addEventListener('DOMContentLoaded', () => {
+  // 認証チェック
+  if (typeof gsIsLoggedIn === 'function' && !gsIsLoggedIn()) {
+    window.location.href = '/login.html'; return;
+  }
+
+  // brands.htmlからのブランド引き継ぎ
+  const brandFromSession = sessionStorage.getItem('gs_scan_brand_name');
+  if (brandFromSession) {
+    const inp = document.getElementById('brand-input');
+    if (inp) inp.value = brandFromSession;
+    sessionStorage.removeItem('gs_scan_brand_name');
+    sessionStorage.removeItem('gs_scan_brand_id');
+  }
+
+  // ユーザー名表示
+  const profile = typeof gsGetProfile === 'function' ? gsGetProfile() : null;
+  const navUser = document.getElementById('nav-user');
+  if (profile && navUser) navUser.textContent = profile.display_name || profile.email || '';
+
   // navにキー設定ボタン追加
   const navR = document.querySelector('.nav-r');
   const keyBtn = document.createElement('button');
@@ -861,11 +903,14 @@ window.runScan = async function() {
 
   showProgress(1, 4, 'スキャン開始');
 
+  // B-04修正: fetch()オプションオブジェクト内のconst宣言を外に移動
+  const industry = document.getElementById("industry-input")?.value || "general";
+
   try {
     const resp = await fetch('/api/scan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ brand, competitors, apis }),
+      body: JSON.stringify({ brand, competitors, apis, industry }),
     });
     showProgress(3, 4, '集計中');
     if (!resp.ok) { const err = await resp.json(); throw new Error(err.error || 'スキャン失敗'); }
@@ -880,6 +925,25 @@ window.runScan = async function() {
     saveHistory(data);
     renderHistory();
     showToast('スキャン完了！', 'ok');
+
+    // Supabaseに自動保存（ログイン済みの場合）
+    if (gsIsLoggedIn()) {
+      // B-03修正: セレクターのbrand_idを優先し、なければsessionStorageを参照
+      const selectorEl = document.getElementById('brand-selector');
+      const brandIdFromSelector = selectorEl?.value || null;
+      const brandIdFromSession = sessionStorage.getItem('gs_scan_brand_id') || null;
+      const brandId = brandIdFromSelector || brandIdFromSession || null;
+      fetch('/api/scan?action=save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${gsToken ? gsToken() : ''}`,
+        },
+        body: JSON.stringify({ scan_data: data, brand_id: brandId }),
+      }).then(r => {
+        if (r.ok) showToast('スキャン結果を保存しました', 'ok');
+      }).catch(() => {}); // サイレント失敗
+    }
 
     // メール通知（設定されている場合）
     const notifyEmail = localStorage.getItem('gs_notify_email');
@@ -897,8 +961,130 @@ window.runScan = async function() {
     setTimeout(hideProgress, 800);
   }
 };
+// ========== B-03修正: ブランドセレクター ==========
+async function loadBrandSelector() {
+  if (!gsIsLoggedIn()) return;
+  try {
+    const resp = await fetch('/api/brands?action=list', {
+      headers: { 'Authorization': `Bearer ${gsToken ? gsToken() : ''}` },
+    });
+    if (!resp.ok) return;
+    const { brands } = await resp.json();
+    const sel = document.getElementById('brand-selector');
+    if (!sel || !brands?.length) return;
+
+    // 既存オプションをリセット
+    sel.innerHTML = '<option value="">── ブランドに紐づけない ──</option>';
+    brands.forEach(b => {
+      const opt = document.createElement('option');
+      opt.value = b.id;
+      opt.textContent = b.name;
+      sel.appendChild(opt);
+    });
+    sel.style.display = '';
+
+    // sessionStorage に brand_id がある場合は選択状態にする
+    const preselect = sessionStorage.getItem('gs_scan_brand_id');
+    if (preselect) sel.value = preselect;
+  } catch (e) {
+    // サイレント失敗
+  }
+}
+
+function onBrandSelect(brandId) {
+  const inp = document.getElementById('brand-input');
+  if (!brandId || !inp) return;
+  // 選択したブランド名をテキスト入力に反映
+  const sel = document.getElementById('brand-selector');
+  const opt = sel?.options[sel.selectedIndex];
+  if (opt && opt.value) inp.value = opt.textContent;
+}
+
+// ページロード時にブランドセレクターを初期化
+document.addEventListener('DOMContentLoaded', () => {
+  if (gsIsLoggedIn()) loadBrandSelector();
+});
+
 </script>
+<script>
+// ===== 共有URL生成 =====
+async function createShare() {
+  const history = getHistory();
+  if (!history.length) { showToast('スキャン結果がありません', 'warn'); return; }
+  try {
+    const latest = history[0];
+    const shareData = {
+      brand_name: latest.brand,
+      avg_rate: latest.avgRate,
+      by_ai: latest.byAI,
+      total_citations: latest.totalCitations || 0,
+      scanned_at: latest.scannedAt,
+      citations: [],
+    };
+    const encoded = btoa(encodeURIComponent(JSON.stringify(shareData)));
+    const shareUrl = location.origin + '/share.html?data=' + encoded;
+    await navigator.clipboard.writeText(shareUrl);
+    showToast('共有URLをコピーしました', 'ok');
+  } catch(e) { showToast('コピー失敗: ' + e.message, 'error'); }
+}
+
+// ===== CSVエクスポート =====
+function exportCsv() {
+  const history = getHistory();
+  if (!history.length) { showToast('エクスポートするデータがありません', 'warn'); return; }
+  const headers = ['日時','ブランド','平均(%)','ChatGPT(%)','Perplexity(%)','Gemini(%)','Claude(%)','引用URL数'];
+  const rows = history.map(h => [
+    new Date(h.scannedAt).toLocaleString('ja-JP'),
+    h.brand, h.avgRate,
+    h.byAI?.chatgpt??'', h.byAI?.perplexity??'', h.byAI?.gemini??'', h.byAI?.claude??'',
+    h.totalCitations??0,
+  ]);
+  const csv = '\uFEFF' + [headers,...rows].map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = 'geoscope_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  showToast('エクスポートしました', 'ok');
+}
+</script>
+<script src="/gs-client.js"></script>
 <script src="/themes.js"></script>
 <script>document.addEventListener("DOMContentLoaded",()=>{initTheme();mountThemeButton();});</script>
+<script>
+// ===== Supabase Realtime：自動スキャン完了通知 =====
+document.addEventListener('DOMContentLoaded', () => {
+  const supabaseUrl = window.GS_SUPABASE_URL;
+  const supabaseAnon = window.GS_SUPABASE_ANON;
+  if (!supabaseUrl || !supabaseAnon || !gsIsLoggedIn()) return;
+
+  const user = gsGetUser();
+  if (!user) return;
+
+  const wsUrl = supabaseUrl.replace('https://', 'wss://').replace('http://', 'ws://');
+  const token = gsToken ? gsToken() : '';
+
+  try {
+    const ws = new WebSocket(`${wsUrl}/realtime/v1/websocket?apikey=${supabaseAnon}&vsn=1.0.0`);
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        topic: `realtime:public:scans:user_id=eq.${user.id}`,
+        event: 'phx_join',
+        payload: { user_token: token },
+        ref: '1',
+      }));
+    };
+    ws.onmessage = (msg) => {
+      try {
+        const data = JSON.parse(msg.data);
+        if (data.event === 'INSERT' && data.payload?.record) {
+          const rec = data.payload.record;
+          showToast(`✓ ${rec.brand_name} のスキャン完了 (${rec.avg_rate}%)`, 'ok');
+          renderHistory();
+        }
+      } catch {}
+    };
+  } catch {}
+});
+</script>
 </body>
 </html>

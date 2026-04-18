@@ -1,12 +1,24 @@
 // api/report/index.js
 // スキャン完了通知 & 週次レポートメール - Resend使用
 
+import { requireAuth } from '../../lib/supabase.js';
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', process.env.ALLOWED_ORIGIN || '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // B-06修正: 認証必須化 - 未認証リクエストを拒否
+  // cronからの内部呼び出しはCRON_SECRETで認証
+  const cronSecret = req.headers['x-cron-secret'];
+  const isInternalCall = cronSecret && cronSecret === process.env.CRON_SECRET;
+
+  if (!isInternalCall) {
+    const user = await requireAuth(req, res);
+    if (!user) return;
+  }
 
   const { type, email, scanData, weeklyData } = req.body || {};
   if (!email) return res.status(400).json({ error: 'メールアドレスが必要です' });

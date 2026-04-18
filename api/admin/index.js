@@ -185,7 +185,11 @@ async function updateSchedule(req, res, supabase, user) {
 // ===== 管理者統計（ADMIN_EMAILのみ） =====
 async function adminStats(req, res, supabase, user) {
   const adminEmail = process.env.ADMIN_EMAIL;
-  if (!adminEmail || user.email !== adminEmail) {
+  // B-13修正: ADMIN_EMAIL未設定の場合は503を返す（永続的な403より適切）
+  if (!adminEmail) {
+    return res.status(503).json({ error: 'ADMIN_EMAILが設定されていません' });
+  }
+  if (user.email !== adminEmail) {
     return res.status(403).json({ error: '管理者権限が必要です' });
   }
 
@@ -205,11 +209,32 @@ async function adminStats(req, res, supabase, user) {
   const plans = { free: 0, pro: 0, business: 0 };
   planDist?.forEach(p => { plans[p.plan] = (plans[p.plan] || 0) + 1; });
 
+  // 直近7日間の日別スキャン数
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: dailyScans } = await supabase
+    .from('scans')
+    .select('scanned_at')
+    .gte('scanned_at', sevenDaysAgo)
+    .order('scanned_at', { ascending: true });
+
+  // 日別集計
+  const dailyMap = {};
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+    const key = d.toISOString().slice(0, 10);
+    dailyMap[key] = 0;
+  }
+  dailyScans?.forEach(s => {
+    const key = s.scanned_at.slice(0, 10);
+    if (key in dailyMap) dailyMap[key]++;
+  });
+
   return res.status(200).json({
     users: userCount,
     scans: scanCount,
     brands: brandCount,
     plan_distribution: plans,
     recent_scans: recentScans,
+    daily_scans: Object.entries(dailyMap).map(([date, count]) => ({ date, count })),
   });
 }

@@ -12,40 +12,148 @@ function withTimeout(promise, ms) {
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // action=save: Supabaseにスキャン結果を保存
+  if (req.query?.action === 'save') {
+    try {
+      const { requireAuth } = await import('../../lib/supabase.js');
+      const user = await requireAuth(req, res);
+      if (!user) return;
+      let body = req.body;
+      if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
+      const { scan_data, brand_id } = body || {};
+      if (!scan_data) return res.status(400).json({ error: 'scan_dataが必要です' });
+      const saved = await saveScanToDB(user.id, brand_id, scan_data.brand, scan_data);
+      return res.status(200).json({ ok: true, scan: saved });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
 
   let body = req.body;
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
 
-  const { brand, competitors = [], apis = {} } = body;
+  const { brand, competitors = [], apis = {}, industry = 'general' } = body;
   if (!brand || !brand.trim()) return res.status(400).json({ error: 'ブランド名が必要です' });
   if (Object.keys(apis).length === 0) return res.status(400).json({ error: 'APIキーが1つ以上必要です' });
 
-  // 20種類の多様なプロンプト（会話形式・GEO引用されやすいパターン）
-  const prompts = [
+  // AI数に応じてプロンプト数を調整（Vercel 25秒タイムアウト対策）
+  const aiCount = Object.keys(apis).length;
+  const PROMPT_LIMITS = { 1: 18, 2: 12, 3: 9, 4: 7 };
+  const promptLimit = PROMPT_LIMITS[aiCount] || 7;
+
+  // ===== 業種別プロンプトセット =====
+  const INDUSTRY_PROMPTS = {
+    saas: [
+      `${brand}はどんなSaaSですか？`,
+      `${brand}の主な機能を教えてください`,
+      `${brand}の料金プランを教えてください`,
+      `${brand}は使いやすいですか？`,
+      `${brand}のAPI連携について教えてください`,
+      `${brand}の導入事例を教えてください`,
+      `${brand}のサポート体制はどうですか？`,
+      `${brand}と似たSaaSを比較してください`,
+      `${brand}の無料トライアルはありますか？`,
+      `${brand}はセキュリティが高いですか？`,
+    ],
+    ec: [
+      `${brand}の商品はどんなものがありますか？`,
+      `${brand}で購入した人の口コミを教えてください`,
+      `${brand}の配送・返品について教えてください`,
+      `${brand}は安全に購入できますか？`,
+      `${brand}のセール・クーポン情報を教えてください`,
+      `${brand}の品質はどうですか？`,
+      `${brand}のおすすめ商品は？`,
+      `${brand}と他のショップを比較してください`,
+      `${brand}での支払い方法を教えてください`,
+    ],
+    restaurant: [
+      `${brand}はどんなお店ですか？`,
+      `${brand}のおすすめメニューを教えてください`,
+      `${brand}の雰囲気・内装はどうですか？`,
+      `${brand}の評判・口コミを教えてください`,
+      `${brand}の予約方法を教えてください`,
+      `${brand}のコスパはどうですか？`,
+      `${brand}はデートや接待に向いていますか？`,
+      `${brand}の近くにある似たお店は？`,
+    ],
+    consulting: [
+      `${brand}はどんなコンサルティング会社ですか？`,
+      `${brand}の得意な分野を教えてください`,
+      `${brand}の支援実績を教えてください`,
+      `${brand}に相談するにはどうすればいいですか？`,
+      `${brand}の料金体系を教えてください`,
+      `${brand}と他のコンサル会社を比較してください`,
+      `${brand}のコンサルタントの専門性は？`,
+    ],
+    media: [
+      `${brand}はどんなメディアですか？`,
+      `${brand}の主な記事・コンテンツを教えてください`,
+      `${brand}の読者層はどんな人ですか？`,
+      `${brand}は信頼できる情報源ですか？`,
+      `${brand}の特徴的なコーナーを教えてください`,
+      `${brand}の運営会社はどこですか？`,
+    ],
+    healthcare: [
+      `${brand}はどんな医療・健康サービスですか？`,
+      `${brand}の診療科・サービス内容を教えてください`,
+      `${brand}は評判がいいですか？`,
+      `${brand}の予約・受診方法を教えてください`,
+      `${brand}の費用を教えてください`,
+      `${brand}の医師・スタッフの専門性は？`,
+    ],
+    education: [
+      `${brand}はどんな教育サービスですか？`,
+      `${brand}のカリキュラムを教えてください`,
+      `${brand}の合格実績・成果を教えてください`,
+      `${brand}の料金を教えてください`,
+      `${brand}は初心者でも始められますか？`,
+      `${brand}と他の教育サービスを比較してください`,
+      `${brand}のサポート体制はどうですか？`,
+    ],
+    // B-10修正: general業種に汎用プロンプトを追加（空配列だと共通のみになり精度が下がる）
+    general: [
+      `${brand}はどんな会社・サービスですか？`,
+      `${brand}の強みや特徴を教えてください`,
+      `${brand}を利用している人の評判を教えてください`,
+      `${brand}はどんな人におすすめですか？`,
+      `${brand}の主要な製品・サービスを教えてください`,
+      `${brand}の歴史や背景を教えてください`,
+      `${brand}の価格・料金体系を教えてください`,
+      `${brand}と競合他社との違いを教えてください`,
+      `${brand}の最新のニュースや動向は？`,
+      `${brand}のサポートや問い合わせ方法を教えてください`,
+    ],
+  };
+
+  // 共通プロンプト（全業種）
+  const commonPrompts = [
     `${brand}について教えてください`,
     `${brand}はどんなサービスですか？`,
     `${brand}の評判を教えてください`,
     `${brand}はおすすめですか？`,
-    `${brand}を使ってみた感想を教えてください`,
-    `${brand}と競合サービスを比較してください`,
-    `${brand}の料金はいくらですか？`,
     `${brand}の特徴を教えてください`,
-    `${brand}はどんな企業ですか？`,
     `${brand}の口コミはどうですか？`,
     ...(competitors.length > 0 ? [
       `${brand}と${competitors[0]}どちらがいいですか？`,
       `${competitors[0]}の代わりになるサービスを教えてください`,
     ] : []),
-    `日本のGEOトラッキングツールのおすすめは？`,
-    `AI検索で出現率を上げる無料ツールは？`,
-    `ChatGPTに引用されるか調べるツールはありますか？`,
-    `GEO対策ができるSaaSを教えてください`,
-    `Perplexityに自社が引用されているか確認する方法は？`,
-    `AI検索向けのSEOツールで無料のものはありますか？`,
-  ].slice(0, 20);
+  ];
+
+  // 業種別プロンプトをマージ（業種別 → 共通の順）
+  const industryPrompts = INDUSTRY_PROMPTS[industry] || [];
+  const allPrompts = [...industryPrompts, ...commonPrompts];
+
+  // 重複除去 & 上限適用
+  const seen = new Set();
+  const prompts = allPrompts.filter(p => {
+    if (seen.has(p)) return false;
+    seen.add(p);
+    return true;
+  }).slice(0, promptLimit);
 
   const results = {};
   const errors = {};
@@ -293,7 +401,7 @@ function chunkArray(arr, size) {
 
 // ===== DB保存（認証済みユーザー向け） =====
 // このエンドポイントはapi/scan?action=saveで呼ぶ
-export async function saveScanToDB(userId, brandId, brandName, scanData) {
+async function saveScanToDB(userId, brandId, brandName, scanData) {
   const { createServerClient } = await import('../../lib/supabase.js');
   const supabase = createServerClient();
 
@@ -301,19 +409,19 @@ export async function saveScanToDB(userId, brandId, brandName, scanData) {
     user_id: userId,
     brand_id: brandId || null,
     brand_name: brandName,
-    avg_rate: scanData.summary.avgRate,
-    rate_chatgpt:    scanData.summary.byAI.chatgpt,
-    rate_perplexity: scanData.summary.byAI.perplexity,
-    rate_gemini:     scanData.summary.byAI.gemini,
-    rate_claude:     scanData.summary.byAI.claude,
-    total_citations: scanData.summary.totalCitations,
+    avg_rate: scanData?.summary?.avgRate ?? null,
+    rate_chatgpt:    scanData?.summary?.byAI?.chatgpt ?? null,
+    rate_perplexity: scanData?.summary?.byAI?.perplexity ?? null,
+    rate_gemini:     scanData?.summary?.byAI?.gemini ?? null,
+    rate_claude:     scanData?.summary?.byAI?.claude ?? null,
+    total_citations: scanData?.summary?.totalCitations ?? null,
     raw_data: scanData,
   }).select().single();
 
   if (error) throw new Error(error.message);
 
   // 引用URLを保存
-  if (saved && scanData.summary.citations?.length > 0) {
+  if (saved && scanData?.summary?.citations?.length > 0) {
     const citationRows = scanData.summary.citations.slice(0, 50).map(c => ({
       scan_id: saved.id,
       url: c.url,

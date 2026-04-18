@@ -18,13 +18,12 @@ export default async function handler(req, res) {
   console.log(`[CRON] 週次スキャン開始: ${now.toISOString()}`);
 
   try {
-    // 実行すべきスケジュールを取得
+    // B-07修正: profiles!user_id の非標準JOIN記法を2ステップクエリに変更
     const { data: schedules, error } = await supabase
       .from('scan_schedules')
       .select(`
         *,
-        brands(id, name),
-        profiles!user_id(id, plan, notify_email)
+        brands(id, name)
       `)
       .eq('is_active', true)
       .lte('next_run_at', now.toISOString())
@@ -36,23 +35,52 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true, ran: 0 });
     }
 
+    // ユーザーIDリストを取得してprofilesを一括フェッチ
+    const userIds = [...new Set(schedules.map(s => s.user_id))];
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, plan, notify_email')
+      .in('id', userIds);
+    const profileMap = Object.fromEntries((profiles || []).map(p => [p.id, p]));
+
     console.log(`[CRON] ${schedules.length}件のスケジュールを処理`);
 
     const results = [];
     for (const schedule of schedules) {
+      const profile = profileMap[schedule.user_id] || null;
+      let success = false;
       try {
-        const result = await runScheduledScan(supabase, schedule);
+        const result = await runScheduledScan(supabase, schedule, profile);
         results.push({ schedule_id: schedule.id, status: 'ok', ...result });
+        success = true;
       } catch (e) {
         console.error(`[CRON] スキャン失敗 ${schedule.id}:`, e.message);
         results.push({ schedule_id: schedule.id, status: 'error', error: e.message });
+
+        // B-15修正: 失敗時はエラーメールを送信し、next_run_atは更新しない
+        if (profile?.notify_email) {
+          await fetch(`${process.env.SITE_URL || 'https://geoscope.jp'}/api/report`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-cron-secret': process.env.CRON_SECRET || '',
+            },
+            body: JSON.stringify({
+              type: 'scan_error',
+              email: profile.notify_email,
+              errorData: { brand: schedule.brands?.name || '不明', error: e.message },
+            }),
+          }).catch(() => {});
+        }
       }
 
-      // 次回実行日時を更新
-      const nextRun = calcNextRun(schedule.frequency, schedule.day_of_week);
-      await supabase.from('scan_schedules')
-        .update({ last_run_at: now.toISOString(), next_run_at: nextRun })
-        .eq('id', schedule.id);
+      // B-15修正: 成功時のみnext_run_atを更新
+      if (success) {
+        const nextRun = calcNextRun(schedule.frequency, schedule.day_of_week);
+        await supabase.from('scan_schedules')
+          .update({ last_run_at: now.toISOString(), next_run_at: nextRun })
+          .eq('id', schedule.id);
+      }
     }
 
     console.log('[CRON] 完了:', results);
@@ -64,10 +92,10 @@ export default async function handler(req, res) {
   }
 }
 
-async function runScheduledScan(supabase, schedule) {
+async function runScheduledScan(supabase, schedule, profile) {
   const userId = schedule.user_id;
   const brand = schedule.brands;
-  const profile = schedule.profiles;
+  // B-07修正: profileは呼び出し元から渡す（2ステップクエリの結果）
 
   if (!brand) throw new Error('ブランドが見つかりません');
 

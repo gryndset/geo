@@ -20,6 +20,7 @@ export default async function handler(req, res) {
       case 'me':       return await getMe(req, res);
       case 'update':   return await updateProfile(req, res);
       case 'reset':    return await resetPassword(req, res);
+      case 'refresh':  return await refreshToken(req, res);
       default:
         return res.status(400).json({ error: `不明なアクション: ${action}` });
     }
@@ -84,8 +85,14 @@ async function logout(req, res) {
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token) return res.status(200).json({ ok: true });
 
+  // B-05修正: supabase.auth.admin.signOutは存在しない
+  // Admin APIのsignOutUser（セッション無効化）を使用
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  await supabase.auth.admin.signOut(token).catch(() => {});
+  const { data: { user } } = await supabase.auth.getUser(token).catch(() => ({ data: {} }));
+  if (user?.id) {
+    const admin = createServerClient();
+    await admin.auth.admin.signOutUser(user.id).catch(() => {});
+  }
   return res.status(200).json({ ok: true });
 }
 
@@ -145,4 +152,17 @@ async function resetPassword(req, res) {
   if (error) return res.status(400).json({ error: error.message });
 
   return res.status(200).json({ message: 'パスワードリセットメールを送信しました' });
+}
+
+// ===== トークンリフレッシュ =====
+async function refreshToken(req, res) {
+  if (req.method !== 'POST') return res.status(405).end();
+  const { refresh_token } = req.body || {};
+  if (!refresh_token) return res.status(400).json({ error: 'refresh_tokenが必要です' });
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const { data, error } = await supabase.auth.refreshSession({ refresh_token });
+  if (error) return res.status(401).json({ error: error.message });
+
+  return res.status(200).json({ session: data.session });
 }

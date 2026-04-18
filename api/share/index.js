@@ -54,7 +54,7 @@ async function createShare(req, res, supabase, user) {
 
   const { data, error } = await supabase
     .from('shares')
-    .insert({ scan_id, user_id: user.id, slug, expires_at })
+    .insert({ scan_id, user_id: user.id, slug, expires_at, is_public: true })
     .select().single();
 
   if (error) return res.status(500).json({ error: error.message });
