@@ -1,351 +1,199 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<link rel="canonical" href="https://geoscope.jp/brands.html">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ブランド管理 — Geoscope</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap">
-<style>
-:root{--bg:#070710;--bg2:#0b0b1c;--sf:#10101f;--bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.12);--tx:#edeae0;--t2:rgba(237,234,224,.52);--t3:rgba(237,234,224,.22);--gn:#3ddc84;--am:#f0b429;--rd:#ef6060;--pu:#8b7cf8;}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;}
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(7,7,16,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
-.nl{text-decoration:none;}
-.nlm{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;letter-spacing:7px;text-transform:uppercase;color:var(--tx);line-height:1;}
-.nls{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;}
-.nav-links{display:flex;gap:4px;list-style:none;}
-.nav-links a{font-size:12px;color:var(--t2);text-decoration:none;padding:5px 12px;border-radius:3px;transition:all .2s;}
-.nav-links a:hover,.nav-links a.active{color:var(--tx);}
-.nav-r{display:flex;gap:8px;align-items:center;}
-.nav-user{font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);letter-spacing:1px;}
+// api/alerts/index.js - アラート管理API
 
-.main{max-width:1000px;margin:0 auto;padding:90px 40px 80px;}
-.page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:32px;}
-.page-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;}
-.btn{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:10px 20px;border:1px solid var(--bd);color:var(--t3);background:transparent;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
-.btn:hover{color:var(--t2);border-color:var(--bd2);}
-.btn-primary{background:var(--tx);color:var(--bg);border-color:var(--tx);}
-.btn-primary:hover{opacity:.87;color:var(--bg);}
+import { setCors, createServerClient, requireAuth } from '../../lib/supabase.js';
 
-/* ブランドグリッド */
-.brands-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--bd);}
-.brand-card{background:var(--bg);padding:24px;cursor:pointer;transition:background .15s;position:relative;}
-.brand-card:hover{background:rgba(255,255,255,.02);}
-.brand-accent{width:3px;height:100%;position:absolute;left:0;top:0;}
-.brand-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;margin-bottom:4px;}
-.brand-rate{font-family:'DM Mono',monospace;font-size:28px;font-weight:300;line-height:1;}
-.brand-label{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;}
-.brand-comps{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
-.comp-chip{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1px;padding:2px 8px;border:1px solid var(--bd);color:var(--t3);}
-.brand-meta{font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);margin-top:12px;padding-top:12px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;}
-.brand-actions{display:flex;gap:6px;margin-top:12px;}
-.brand-btn{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border:1px solid var(--bd);color:var(--t3);background:transparent;cursor:pointer;transition:all .2s;}
-.brand-btn:hover{color:var(--t2);border-color:var(--bd2);}
-.brand-btn.scan{color:var(--pu);border-color:rgba(139,124,248,.3);}
-.brand-btn.del{color:var(--rd);border-color:rgba(239,96,96,.2);}
+export default async function handler(req, res) {
+  setCors(res);
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
-/* 空状態 */
-.empty{text-align:center;padding:80px 40px;}
-.empty-icon{font-size:40px;opacity:.2;margin-bottom:20px;}
-.empty-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--t2);margin-bottom:8px;}
-.empty-sub{font-size:13px;color:var(--t3);margin-bottom:24px;}
+  const user = await requireAuth(req, res);
+  if (!user) return;
 
-/* モーダル */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:800;display:flex;align-items:center;justify-content:center;padding:20px;}
-.modal{background:var(--bg2);border:1px solid var(--bd2);padding:36px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
-.modal-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;margin-bottom:24px;}
-.modal-field{margin-bottom:16px;}
-.modal-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:6px;}
-.modal-input{width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-size:13px;padding:10px 14px;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s;}
-.modal-input:focus{border-color:var(--pu);}
-.modal-footer{display:flex;gap:10px;margin-top:24px;}
-.color-row{display:flex;gap:8px;flex-wrap:wrap;}
-.color-swatch{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s;}
-.color-swatch.selected{border-color:var(--tx);}
-.comp-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
-.comp-tag{font-family:'DM Mono',monospace;font-size:8px;padding:3px 10px;border:1px solid var(--bd);color:var(--t2);display:flex;align-items:center;gap:6px;}
-.comp-tag button{background:none;border:none;color:var(--t3);cursor:pointer;font-size:12px;line-height:1;}
+  const supabase = createServerClient();
+  const { action, id } = req.query;
 
-@media(max-width:720px){
-  nav{padding:0 20px;}
-  .nav-links{display:none;}
-  .main{padding:80px 20px 60px;}
-  .page-header{flex-direction:column;align-items:flex-start;gap:16px;}
-  .brands-grid{grid-template-columns:1fr;}
-}
-</style>
-</head>
-<body>
-
-<nav>
-  <a href="index.html" class="nl">
-    <div class="nlm">Geoscope</div>
-    <div class="nls">GEO Tracking</div>
-  </a>
-  <ul class="nav-links">
-    <li><a href="dashboard.html">ダッシュボード</a></li>
-    <li><a href="brands.html" class="active">ブランド</a></li>
-    <li><a href="alerts.html">アラート</a></li>
-    <li><a href="settings.html">設定</a></li>
-  </ul>
-  <div class="nav-r">
-    <span class="nav-user" id="nav-user"></span>
-  </div>
-</nav>
-
-<main class="main">
-  <div class="page-header">
-    <div class="page-title">ブランド管理</div>
-    <button class="btn btn-primary" onclick="openCreateModal()">+ ブランドを追加</button>
-  </div>
-
-  <div id="brands-container">
-    <div class="empty">
-      <div class="empty-icon">○</div>
-      <div class="empty-title">読み込み中...</div>
-    </div>
-  </div>
-</main>
-
-<!-- 作成/編集モーダル -->
-<div class="modal-overlay" id="modal" style="display:none;" onclick="closeModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-title" id="modal-title">ブランドを追加</div>
-
-    <div class="modal-field">
-      <div class="modal-label">ブランド名 *</div>
-      <input id="m-name" class="modal-input" type="text" placeholder="例：株式会社〇〇 / ブランド名">
-    </div>
-    <div class="modal-field">
-      <div class="modal-label">説明（任意）</div>
-      <input id="m-desc" class="modal-input" type="text" placeholder="サービスの概要など">
-    </div>
-    <div class="modal-field">
-      <div class="modal-label">カラー</div>
-      <div class="color-row" id="color-row">
-        ${['#8b7cf8','#3ddc84','#f0b429','#ef6060','#60b4ef','#ef60c8','#edeae0'].map(c =>
-          `<div class="color-swatch ${c==='#8b7cf8'?'selected':''}" style="background:${c};" data-color="${c}" onclick="selectColor(this)"></div>`
-        ).join('')}
-      </div>
-    </div>
-    <div class="modal-field">
-      <div class="modal-label">競合ブランド（Enterで追加）</div>
-      <input id="m-comp-input" class="modal-input" type="text" placeholder="競合名を入力してEnter" onkeydown="addCompFromInput(event)">
-      <div class="comp-tags" id="comp-tags"></div>
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn-primary" id="modal-save-btn" onclick="saveModal()">保存する</button>
-      <button class="btn" onclick="closeModal()">キャンセル</button>
-    </div>
-  </div>
-</div>
-
-<script src="/gs-client.js"></script>
-<script src="/themes.js"></script>
-<script>
-gsAuth.requireLogin();
-initTheme();
-mountThemeButton();
-
-const COLORS = ['#8b7cf8','#3ddc84','#f0b429','#ef6060','#60b4ef','#ef60c8','#edeae0'];
-let selectedColor = '#8b7cf8';
-let editingId = null;
-let tempComps = [];
-
-// ===== 初期化 =====
-document.addEventListener('DOMContentLoaded', async () => {
-  const profile = gsGetProfile();
-  if (profile) document.getElementById('nav-user').textContent = profile.display_name || profile.email || '';
-  await loadBrands();
-});
-
-// ===== ブランド一覧 =====
-async function loadBrands() {
   try {
-    const { brands } = await gsBrands.list();
-    renderBrands(brands);
+    switch (action) {
+      case 'list':   return await listAlerts(req, res, supabase, user);
+      case 'create': return await createAlert(req, res, supabase, user);
+      case 'update': return await updateAlert(req, res, supabase, user, id);
+      case 'delete': return await deleteAlert(req, res, supabase, user, id);
+      case 'logs':   return await getAlertLogs(req, res, supabase, user);
+      case 'check':  return await checkAlerts(req, res, supabase, user);
+      default:
+        return res.status(400).json({ error: `不明なアクション: ${action}` });
+    }
   } catch (e) {
-    gsToast(e.message, 'error');
+    console.error('Alerts error:', e);
+    return res.status(500).json({ error: e.message });
   }
 }
 
-function renderBrands(brands) {
-  const container = document.getElementById('brands-container');
+// ===== アラート一覧 =====
+async function listAlerts(req, res, supabase, user) {
+  const { data, error } = await supabase
+    .from('alerts')
+    .select('*, brands(name, color)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
 
-  if (!brands || brands.length === 0) {
-    container.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">◎</div>
-        <div class="empty-title">ブランドがありません</div>
-        <div class="empty-sub">最初のブランドを追加してGEOトラッキングを始めましょう</div>
-        <button class="btn btn-primary" onclick="openCreateModal()">+ ブランドを追加</button>
-      </div>
-    `;
-    return;
+  if (error) return res.status(500).json({ error: error.message });
+  return res.status(200).json({ alerts: data });
+}
+
+// ===== アラート作成 =====
+async function createAlert(req, res, supabase, user) {
+  if (req.method !== 'POST') return res.status(405).end();
+  const { brand_id, type, threshold = 10, notify_email = true } = req.body || {};
+
+  if (!brand_id || !type) return res.status(400).json({ error: 'brand_idとtypeが必要です' });
+
+  // 自分のブランドか確認
+  const { data: brand } = await supabase.from('brands').select('id').eq('id', brand_id).eq('user_id', user.id).single();
+  if (!brand) return res.status(404).json({ error: 'ブランドが見つかりません' });
+
+  const { data, error } = await supabase
+    .from('alerts')
+    .insert({ user_id: user.id, brand_id, type, threshold, notify_email })
+    .select().single();
+
+  if (error) return res.status(500).json({ error: error.message });
+  return res.status(201).json({ alert: data });
+}
+
+// ===== アラート更新 =====
+async function updateAlert(req, res, supabase, user, id) {
+  if (req.method !== 'PUT') return res.status(405).end();
+  if (!id) return res.status(400).json({ error: 'idが必要です' });
+
+  const { threshold, is_active, notify_email } = req.body || {};
+  const updates = {};
+  if (threshold !== undefined) updates.threshold = threshold;
+  if (is_active !== undefined) updates.is_active = is_active;
+  if (notify_email !== undefined) updates.notify_email = notify_email;
+
+  const { data, error } = await supabase
+    .from('alerts').update(updates)
+    .eq('id', id).eq('user_id', user.id)
+    .select().single();
+
+  if (error) return res.status(500).json({ error: error.message });
+  return res.status(200).json({ alert: data });
+}
+
+// ===== アラート削除 =====
+async function deleteAlert(req, res, supabase, user, id) {
+  if (req.method !== 'DELETE') return res.status(405).end();
+  if (!id) return res.status(400).json({ error: 'idが必要です' });
+
+  const { error } = await supabase.from('alerts').delete().eq('id', id).eq('user_id', user.id);
+  if (error) return res.status(500).json({ error: error.message });
+  return res.status(200).json({ ok: true });
+}
+
+// ===== アラートログ =====
+async function getAlertLogs(req, res, supabase, user) {
+  const { brand_id, limit = 50 } = req.query;
+
+  // まず自分のアラートIDを取得（RLSの問題を回避）
+  let alertQuery = supabase
+    .from('alerts')
+    .select('id')
+    .eq('user_id', user.id);
+  if (brand_id) alertQuery = alertQuery.eq('brand_id', brand_id);
+  const { data: userAlerts } = await alertQuery;
+
+  if (!userAlerts || userAlerts.length === 0) {
+    return res.status(200).json({ logs: [] });
   }
 
-  const grid = document.createElement('div');
-  grid.className = 'brands-grid';
+  const alertIds = userAlerts.map(a => a.id);
 
-  brands.forEach(brand => {
-    const rate = brand.latest_scan?.avg_rate;
-    const rateColor = rate >= 70 ? 'var(--gn)' : rate >= 40 ? 'var(--am)' : rate !== undefined ? 'var(--rd)' : 'var(--t3)';
-    const scannedAt = brand.latest_scan?.scanned_at ? gsFormatDate(brand.latest_scan.scanned_at) : 'スキャン未実施';
+  const { data, error } = await supabase
+    .from('alert_logs')
+    .select('*, alerts(type, threshold, brands(name, color))')
+    .in('alert_id', alertIds)
+    .order('fired_at', { ascending: false })
+    .limit(parseInt(limit));
 
-    const card = document.createElement('div');
-    card.className = 'brand-card';
-    card.innerHTML = `
-      <div class="brand-accent" style="background:${brand.color || 'var(--pu)'};"></div>
-      <div style="padding-left:8px;">
-        <div class="brand-label">BRAND</div>
-        <div class="brand-name">${brand.name}</div>
-        ${brand.description ? `<div style="font-size:12px;color:var(--t3);margin-bottom:8px;">${brand.description}</div>` : ''}
-        <div class="brand-label" style="margin-top:12px;">出現率</div>
-        <div class="brand-rate" style="color:${rateColor};">${rate !== undefined ? rate + '%' : '—'}</div>
-        ${(brand.competitors || []).length > 0 ? `
-          <div class="brand-comps">
-            ${brand.competitors.map(c => `<span class="comp-chip">${c.name}</span>`).join('')}
-          </div>
-        ` : ''}
-        <div class="brand-meta">
-          <span>スキャン ${brand.scan_count || 0}回</span>
-          <span>${scannedAt}</span>
-        </div>
-        <div class="brand-actions">
-          <button class="brand-btn scan" onclick="goScan('${brand.id}','${brand.name}')">スキャン</button>
-          <button class="brand-btn" onclick="openEditModal('${brand.id}')">編集</button>
-          <button class="brand-btn del" onclick="deleteBrand('${brand.id}','${brand.name}')">削除</button>
-        </div>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-
-  container.innerHTML = '';
-  container.appendChild(grid);
+  if (error) return res.status(500).json({ error: error.message });
+  return res.status(200).json({ logs: data || [] });
 }
 
-// ===== モーダル =====
-function openCreateModal() {
-  editingId = null;
-  tempComps = [];
-  document.getElementById('modal-title').textContent = 'ブランドを追加';
-  document.getElementById('modal-save-btn').textContent = '追加する';
-  document.getElementById('m-name').value = '';
-  document.getElementById('m-desc').value = '';
-  document.getElementById('m-comp-input').value = '';
-  document.getElementById('comp-tags').innerHTML = '';
-  selectedColor = '#8b7cf8';
-  document.querySelectorAll('.color-swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === selectedColor));
-  document.getElementById('modal').style.display = 'flex';
-  setTimeout(() => document.getElementById('m-name').focus(), 100);
-}
+// ===== スキャン後にアラートを評価（内部呼び出し用） =====
+export async function evaluateAlerts(supabase, userId, scanId, scanData) {
+  const { brand_id, brand_name, avg_rate } = scanData;
 
-async function openEditModal(id) {
-  editingId = id;
-  try {
-    const { brand } = await gsBrands.get(id);
-    document.getElementById('modal-title').textContent = 'ブランドを編集';
-    document.getElementById('modal-save-btn').textContent = '保存する';
-    document.getElementById('m-name').value = brand.name;
-    document.getElementById('m-desc').value = brand.description || '';
-    selectedColor = brand.color || '#8b7cf8';
-    document.querySelectorAll('.color-swatch').forEach(s => s.classList.toggle('selected', s.dataset.color === selectedColor));
-    tempComps = (brand.competitors || []).map(c => ({ id: c.id, name: c.name }));
-    renderCompTags();
-    document.getElementById('modal').style.display = 'flex';
-  } catch (e) {
-    gsToast(e.message, 'error');
-  }
-}
+  // このブランドのアクティブなアラートを取得
+  const { data: alerts } = await supabase
+    .from('alerts')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('brand_id', brand_id)
+    .eq('is_active', true);
 
-function closeModal(e) {
-  if (!e || e.target === document.getElementById('modal')) {
-    document.getElementById('modal').style.display = 'none';
-  }
-}
+  if (!alerts || alerts.length === 0) return [];
 
-function selectColor(el) {
-  selectedColor = el.dataset.color;
-  document.querySelectorAll('.color-swatch').forEach(s => s.classList.toggle('selected', s === el));
-}
+  // 前回スキャンを取得
+  const { data: prevScans } = await supabase
+    .from('scans')
+    .select('avg_rate, rate_chatgpt, rate_perplexity, rate_gemini, rate_claude')
+    .eq('brand_id', brand_id)
+    .eq('user_id', userId)
+    .order('scanned_at', { ascending: false })
+    .limit(2);
 
-function addCompFromInput(e) {
-  if (e.key !== 'Enter') return;
-  const input = document.getElementById('m-comp-input');
-  const val = input.value.trim();
-  if (!val) return;
-  tempComps.push({ name: val });
-  input.value = '';
-  renderCompTags();
-}
+  const prev = prevScans?.[1]; // 今回が[0]、前回が[1]
+  const firedAlerts = [];
 
-function removeComp(i) {
-  tempComps.splice(i, 1);
-  renderCompTags();
-}
+  for (const alert of alerts) {
+    let fired = false;
+    let message = '';
 
-function renderCompTags() {
-  document.getElementById('comp-tags').innerHTML = tempComps.map((c, i) =>
-    `<div class="comp-tag">${c.name}<button onclick="removeComp(${i})">×</button></div>`
-  ).join('');
-}
-
-async function saveModal() {
-  const name = document.getElementById('m-name').value.trim();
-  if (!name) { gsToast('ブランド名を入力してください', 'warn'); return; }
-
-  const btn = document.getElementById('modal-save-btn');
-  btn.textContent = '保存中...'; btn.disabled = true;
-
-  try {
-    const data = {
-      name,
-      description: document.getElementById('m-desc').value.trim(),
-      color: selectedColor,
-      competitors: tempComps.map(c => c.name),
-    };
-
-    if (editingId) {
-      await gsBrands.update(editingId, data);
-      gsToast('更新しました', 'ok');
-    } else {
-      await gsBrands.create(data);
-      gsToast('ブランドを追加しました', 'ok');
+    if (alert.type === 'rate_drop' && prev) {
+      const drop = prev.avg_rate - avg_rate;
+      if (drop >= alert.threshold) {
+        fired = true;
+        message = `${brand_name}の出現率が${drop}pt下落しました（${prev.avg_rate}% → ${avg_rate}%）`;
+      }
     }
 
-    document.getElementById('modal').style.display = 'none';
-    await loadBrands();
-  } catch (e) {
-    gsToast(e.message, 'error');
-  } finally {
-    btn.textContent = editingId ? '保存する' : '追加する'; btn.disabled = false;
+    if (alert.type === 'rate_rise' && prev) {
+      const rise = avg_rate - prev.avg_rate;
+      if (rise >= alert.threshold) {
+        fired = true;
+        message = `${brand_name}の出現率が${rise}pt上昇しました（${prev.avg_rate}% → ${avg_rate}%）`;
+      }
+    }
+
+    if (alert.type === 'competitor_overtake' && prev) {
+      // 競合に抜かれた場合（実装省略 - スキャンデータに競合情報が必要）
+      // TODO: 競合比較ロジック
+    }
+
+    if (fired) {
+      // アラートログに記録
+      await supabase.from('alert_logs').insert({ alert_id: alert.id, scan_id: scanId, message });
+      firedAlerts.push({ ...alert, message });
+    }
   }
+
+  return firedAlerts;
 }
 
-// ===== 削除 =====
-async function deleteBrand(id, name) {
-  const ok = await gsConfirm(`「${name}」を削除しますか？\n関連するスキャン履歴・アラートも削除されます。`);
-  if (!ok) return;
-  try {
-    await gsBrands.delete(id);
-    gsToast('削除しました', 'ok');
-    await loadBrands();
-  } catch (e) {
-    gsToast(e.message, 'error');
-  }
-}
+// ===== 手動でアラートチェック =====
+async function checkAlerts(req, res, supabase, user) {
+  const { scan_id } = req.query;
+  if (!scan_id) return res.status(400).json({ error: 'scan_idが必要です' });
 
-// ===== スキャンページへ =====
-function goScan(brandId, brandName) {
-  sessionStorage.setItem('gs_scan_brand_id', brandId);
-  sessionStorage.setItem('gs_scan_brand_name', brandName);
-  window.location.href = '/dashboard.html';
+  const { data: scan } = await supabase.from('scans').select('*').eq('id', scan_id).eq('user_id', user.id).single();
+  if (!scan) return res.status(404).json({ error: 'スキャンが見つかりません' });
+
+  const fired = await evaluateAlerts(supabase, user.id, scan_id, {
+    brand_id: scan.brand_id,
+    brand_name: scan.brand_name,
+    avg_rate: scan.avg_rate,
+  });
+
+  return res.status(200).json({ fired_count: fired.length, alerts: fired });
 }
-</script>
-</body>
-</html>

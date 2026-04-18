@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="/gs-design.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap">
@@ -133,7 +134,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
     <li><a href="faq-clean.html">FAQ</a></li>
     <li><a href="support.html">サポート</a></li>
   </ul>
-  <a href="dashboard.html" class="nav-cta">今すぐ試す →</a>
+  <a href="signup.html" class="nav-cta">今すぐ試す →</a>
 </nav>
 
 <div class="main">
@@ -160,7 +161,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
         <li class="pc-feat"><span class="fc">✓</span>CSVエクスポート</li>
         <li class="pc-feat"><span class="fc">✓</span>登録不要・即日利用可</li>
       </ul>
-      <a href="dashboard.html" class="pc-btn">今すぐ試す →</a>
+      <a href="signup.html" class="pc-btn">今すぐ試す →</a>
     </div>
 
     <!-- PRO -->
@@ -178,7 +179,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
         <li class="pc-feat"><span class="fcd">○</span><span style="color:var(--t3)">Slack通知・アラート</span></li>
         <li class="pc-feat"><span class="fcd">○</span><span style="color:var(--t3)">優先サポート</span></li>
       </ul>
-      <div class="pc-cs">Coming Soon</div>
+      <button class="pc-btn" onclick="startCheckout('pro')" style="cursor:pointer;">Pro にアップグレード →</button>
     </div>
 
     <!-- BUSINESS -->
@@ -196,7 +197,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
         <li class="pc-feat"><span class="fcd">○</span><span style="color:var(--t3)">ホワイトラベル対応</span></li>
         <li class="pc-feat"><span class="fcd">○</span><span style="color:var(--t3)">専任サポート</span></li>
       </ul>
-      <div class="pc-cs">Coming Soon</div>
+      <button class="pc-btn" onclick="startCheckout('business')" style="cursor:pointer;">Business にアップグレード →</button>
     </div>
 
   </div>
@@ -255,12 +256,49 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
   <div class="final-cta">
     <div class="fct-title">まず現状を把握することから。</div>
     <div class="fct-sub">知らないまま過ごすほど、差は広がります。</div>
-    <a href="dashboard.html" class="fct-btn">今すぐ無料で試す →</a>
+    <a href="signup.html" class="fct-btn">今すぐ無料で試す →</a>
     <div class="fct-micro">API KEY ONLY · NO CHARGE · NO REGISTRATION REQUIRED</div>
   </div>
 
 </div>
 <script src="/themes.js"></script>
 <script>document.addEventListener("DOMContentLoaded",()=>{initTheme();mountThemeButton();});</script>
+<script src="/gs-client.js"></script>
+<script>
+async function startCheckout(plan) {
+  if (!gsIsLoggedIn()) {
+    sessionStorage.setItem('gs_redirect', location.href);
+    location.href = '/login.html';
+    return;
+  }
+  const btn = event.target;
+  const orig = btn.textContent;
+  btn.textContent = '処理中...';
+  btn.disabled = true;
+  try {
+    const { url } = await gsApi('/api/stripe?action=create_checkout', {
+      method: 'POST',
+      body: { plan },
+    });
+    location.href = url;
+  } catch (e) {
+    gsToast('エラー: ' + e.message, 'error');
+    btn.textContent = orig;
+    btn.disabled = false;
+  }
+}
+
+// upgraded=1 で戻ってきたらトースト表示
+if (new URLSearchParams(location.search).get('upgraded') === '1') {
+  document.addEventListener('DOMContentLoaded', () => {
+    gsToast('アップグレード完了！ありがとうございます 🎉', 'ok', 5000);
+  });
+}
+if (new URLSearchParams(location.search).get('canceled') === '1') {
+  document.addEventListener('DOMContentLoaded', () => {
+    gsToast('決済をキャンセルしました', 'warn');
+  });
+}
+</script>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>スキャン結果 — Geoscope</title>
 <meta name="description" content="Geoscopeで計測したGEO出現率の共有ページ。">
+<link rel="stylesheet" href="/gs-design.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap">
@@ -101,9 +102,24 @@ const AI_COLORS = {chatgpt:'#3ddc84', perplexity:'#8b7cf8', gemini:'#f0b429', cl
 const AI_LABELS = {chatgpt:'ChatGPT', perplexity:'Perplexity', gemini:'Gemini', claude:'Claude'};
 
 async function loadShare() {
-  const slug = new URLSearchParams(location.search).get('s');
-  if (!slug) { showError('共有URLが無効です'); return; }
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('s');
+  const dataParam = params.get('data');
 
+  // ?data=エンコードデータ（ローカル共有）
+  if (dataParam) {
+    try {
+      const decoded = JSON.parse(decodeURIComponent(atob(dataParam)));
+      render(decoded);
+      return;
+    } catch(e) {
+      showError('共有データが不正です');
+      return;
+    }
+  }
+
+  // ?s=slug（Supabase経由共有）
+  if (!slug) { showError('共有URLが無効です'); return; }
   try {
     const resp = await fetch(`/api/share?action=view&slug=${slug}`);
     const data = await resp.json();

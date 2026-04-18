@@ -8,4 +8,5 @@
   <url><loc>https://geoscope.jp/support.html</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://geoscope.jp/signup.html</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://geoscope.jp/login.html</loc><priority>0.5</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://geoscope.jp/brand-detail.html</loc><priority>0.6</priority><changefreq>weekly</changefreq></url>
 </urlset>

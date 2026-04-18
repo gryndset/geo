@@ -2,9 +2,12 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
 <link rel="canonical" href="https://geoscope.jp/settings.html">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>設定 — Geoscope</title>
+<meta name="description" content="設定 — Geoscope | APIキー・テーマ・スケジュール・エクスポート">
+<link rel="stylesheet" href="/gs-design.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap">
@@ -118,6 +121,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
     <a class="side-item" href="#schedule" onclick="setActive(this)">スケジュール</a>
     <a class="side-item" href="#export" onclick="setActive(this)">エクスポート</a>
     <a class="side-item" href="#share" onclick="setActive(this)">共有URL</a>
+    <a class="side-item" href="#prompts" onclick="setActive(this)">プロンプト</a>
     <a class="side-item" href="#danger" onclick="setActive(this)">アカウント</a>
   </nav>
 
@@ -149,7 +153,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
         </div>
         <div class="field" style="margin-bottom:0;">
           <div class="field-label">プラン</div>
-          <div id="plan-badge" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gn);border:1px solid rgba(61,220,132,.2);padding:4px 12px;display:inline-block;">FREE</div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div id="plan-badge" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gn);border:1px solid rgba(61,220,132,.2);padding:4px 12px;display:inline-block;">FREE</div>
+            <a href="/pricing.html" id="upgrade-link" style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--pu);text-decoration:none;border:1px solid rgba(139,124,248,.3);padding:4px 12px;">プランを変更 →</a>
+            <button id="portal-btn" onclick="openBillingPortal()" style="display:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--t3);background:none;border:1px solid var(--bd);padding:4px 12px;cursor:pointer;">請求管理 →</button>
+          </div>
         </div>
       </div>
     </section>
@@ -252,6 +260,31 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
       </div>
     </section>
 
+    <!-- カスタムプロンプト -->
+    <section id="prompts" class="section">
+      <div class="s-label">スキャン設定</div>
+      <h2 class="s-h2">カスタムプロンプト</h2>
+      <div class="card">
+        <div style="font-size:13px;color:var(--t2);margin-bottom:16px;line-height:1.7;">
+          スキャン時に使用するプロンプトをカスタマイズできます。<br>
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--t3);">※ Proプラン以上の機能です</span>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;">
+          <input id="new-prompt-text" class="field-input" type="text" placeholder="例：{brand}のGEO対策について詳しく教えてください" style="flex:1;">
+          <select id="new-prompt-category" class="field-input" style="width:120px;appearance:none;">
+            <option value="general">一般</option>
+            <option value="evaluation">評価系</option>
+            <option value="comparison">比較系</option>
+            <option value="recommendation">推薦系</option>
+          </select>
+          <button class="btn btn-primary" onclick="addPrompt()">追加</button>
+        </div>
+        <div id="prompts-list" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="color:var(--t3);font-size:13px;">読み込み中...</div>
+        </div>
+      </div>
+    </section>
+
     <!-- 危険ゾーン -->
     <section id="danger" class="section">
       <div class="s-label">アカウント</div>
@@ -279,7 +312,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('p-email').value = user?.email || '';
     document.getElementById('p-notify').value = profile?.notify_email || '';
     const plan = profile?.plan || 'free';
-    document.getElementById('plan-badge').textContent = plan.toUpperCase();
+    const badge = document.getElementById('plan-badge');
+    badge.textContent = plan.toUpperCase();
+    if (plan === 'pro') {
+      badge.style.color = 'var(--pu)';
+      badge.style.borderColor = 'rgba(139,124,248,.3)';
+    } else if (plan === 'business') {
+      badge.style.color = 'var(--am)';
+      badge.style.borderColor = 'rgba(240,180,41,.3)';
+    }
+    // 有料プランはポータルボタン表示
+    if (plan !== 'free') {
+      document.getElementById('portal-btn').style.display = 'inline-block';
+      document.getElementById('upgrade-link').style.display = 'none';
+    }
   } catch (e) {}
 
   // APIキー（localStorageから）
@@ -300,6 +346,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 共有URL
   await loadShares();
+
+  // プロンプト
+  await loadPrompts();
 });
 
 // ===== プロフィール =====
@@ -438,10 +487,80 @@ async function deleteShare(slug) {
   } catch (e) { gsToast(e.message, 'error'); }
 }
 
+// ===== カスタムプロンプト =====
+async function loadPrompts() {
+  try {
+    const { prompts } = await gsApi('/api/admin?action=prompts_list');
+    const list = document.getElementById('prompts-list');
+    if (!list) return;
+    if (!prompts || prompts.length === 0) {
+      list.innerHTML = '<div style="color:var(--t3);font-size:13px;">プロンプトがありません。追加してください。</div>';
+      return;
+    }
+    list.innerHTML = prompts.map(p => `
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--bd);border-radius:8px;background:rgba(255,255,255,.02);">
+        <div style="flex:1;font-size:13px;color:var(--t2);">${p.prompt}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);border:1px solid var(--bd);padding:2px 8px;border-radius:99px;">${p.category}</div>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+          <input type="checkbox" ${p.is_active?'checked':''} onchange="togglePrompt('${p.id}',this.checked)" style="accent-color:var(--pu);">
+          <span style="font-size:11px;color:var(--t3);">有効</span>
+        </label>
+        <button onclick="deletePrompt('${p.id}')" style="background:none;border:1px solid rgba(239,96,96,.2);color:var(--rd);font-size:10px;padding:3px 8px;cursor:pointer;border-radius:6px;">削除</button>
+      </div>
+    `).join('');
+  } catch (e) { 
+    const list = document.getElementById('prompts-list');
+    if (list) list.innerHTML = '<div style="color:var(--t3);font-size:13px;">Proプラン以上の機能です。</div>';
+  }
+}
+
+async function addPrompt() {
+  const text = document.getElementById('new-prompt-text')?.value?.trim();
+  const category = document.getElementById('new-prompt-category')?.value || 'general';
+  if (!text) { gsToast('プロンプトを入力してください', 'warn'); return; }
+  try {
+    await gsApi('/api/admin?action=prompts_create', { method: 'POST', body: { prompt: text, category } });
+    document.getElementById('new-prompt-text').value = '';
+    gsToast('追加しました', 'ok');
+    await loadPrompts();
+  } catch (e) { gsToast(e.message, 'error'); }
+}
+
+async function togglePrompt(id, isActive) {
+  try {
+    await gsApi(`/api/admin?action=prompts_update&id=${id}`, { method: 'PUT', body: { is_active: isActive } });
+  } catch (e) { gsToast(e.message, 'error'); }
+}
+
+async function deletePrompt(id) {
+  const ok = await gsConfirm('このプロンプトを削除しますか？');
+  if (!ok) return;
+  try {
+    await gsApi(`/api/admin?action=prompts_delete&id=${id}`, { method: 'DELETE' });
+    gsToast('削除しました', 'ok');
+    await loadPrompts();
+  } catch (e) { gsToast(e.message, 'error'); }
+}
+
 // ===== サイドナビ =====
 function setActive(el) {
   document.querySelectorAll('.side-item').forEach(i => i.classList.remove('active'));
   el.classList.add('active');
+}
+
+async function openBillingPortal() {
+  const btn = document.getElementById('portal-btn');
+  const orig = btn.textContent;
+  btn.textContent = '処理中...';
+  btn.disabled = true;
+  try {
+    const { url } = await gsApi('/api/stripe?action=create_portal', { method: 'POST' });
+    location.href = url;
+  } catch (e) {
+    gsToast('エラー: ' + e.message, 'error');
+    btn.textContent = orig;
+    btn.disabled = false;
+  }
 }
 </script>
 </body>
