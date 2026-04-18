@@ -1,0 +1,44 @@
+{
+  "name": "Geoscope — GEOトラッキング",
+  "short_name": "Geoscope",
+  "description": "AI検索でのブランド出現率をリアルタイム計測するGEOトラッキングSaaS",
+  "start_url": "/dashboard.html",
+  "display": "standalone",
+  "background_color": "#070710",
+  "theme_color": "#070710",
+  "orientation": "portrait-primary",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%23070710'/%3E%3Ccircle cx='96' cy='96' r='40' fill='none' stroke='%238b7cf8' stroke-width='6'/%3E%3Ccircle cx='96' cy='96' r='8' fill='%238b7cf8'/%3E%3Cline x1='96' y1='56' x2='96' y2='40' stroke='%238b7cf8' stroke-width='4'/%3E%3Cline x1='96' y1='136' x2='96' y2='152' stroke='%238b7cf8' stroke-width='4'/%3E%3Cline x1='56' y1='96' x2='40' y2='96' stroke='%238b7cf8' stroke-width='4'/%3E%3Cline x1='136' y1='96' x2='152' y2='96' stroke='%238b7cf8' stroke-width='4'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23070710'/%3E%3Ccircle cx='256' cy='256' r='110' fill='none' stroke='%238b7cf8' stroke-width='16'/%3E%3Ccircle cx='256' cy='256' r='22' fill='%238b7cf8'/%3E%3Cline x1='256' y1='146' x2='256' y2='106' stroke='%238b7cf8' stroke-width='12'/%3E%3Cline x1='256' y1='366' x2='256' y2='406' stroke='%238b7cf8' stroke-width='12'/%3E%3Cline x1='146' y1='256' x2='106' y2='256' stroke='%238b7cf8' stroke-width='12'/%3E%3Cline x1='366' y1='256' x2='406' y2='256' stroke='%238b7cf8' stroke-width='12'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "ダッシュボード",
+      "url": "/dashboard.html",
+      "description": "スキャン実行・結果確認"
+    },
+    {
+      "name": "ブランド管理",
+      "url": "/brands.html",
+      "description": "ブランドの追加・編集"
+    },
+    {
+      "name": "アラート",
+      "url": "/alerts.html",
+      "description": "出現率アラートの管理"
+    }
+  ]
+}
