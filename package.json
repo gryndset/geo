@@ -1,0 +1,16 @@
+{
+  "name": "geoscope",
+  "version": "1.0.0",
+  "description": "GEOトラッキングSaaS - AI検索でのブランド出現率を計測",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=18.x" },
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  }
+}

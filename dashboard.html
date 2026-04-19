@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/gs-design.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap">
+<link rel="canonical" href="https://geoscope.jp/dashboard.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ダッシュボード — Geoscope | GEOトラッキング</title>
+<meta property="og:title" content="ダッシュボード — Geoscope">
+<meta property="og:description" content="GEO出現率・競合比較・引用URLをリアルタイムで確認。4つのAIプラットフォームを横断してブランドの可視性を計測。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Geoscope">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ダッシュボード — Geoscope">
+<meta name="twitter:description" content="GEO出現率・競合比較・引用URLをリアルタイムで確認。4つのAIプラットフォームを横断してブランドの可視性を計測。">
+<meta name="description" content="GEO出現率・競合比較・引用URLをリアルタイムで確認。4つのAIプラットフォームを横断してブランドの可視性を計測。">
+<style>
+:root{
+  --bg:#070710;--bg2:#0b0b1c;--sf:#10101f;
+  --bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.12);
+  --tx:#edeae0;--t2:rgba(237,234,224,.52);--t3:rgba(237,234,224,.22);
+  --gn:#3ddc84;--am:#f0b429;--rd:#ef6060;--pu:#8b7cf8;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(7,7,16,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
+.nl{text-decoration:none;}
+.nlm{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;letter-spacing:7px;text-transform:uppercase;color:var(--tx);line-height:1;}
+.nls{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;}
+.nav-links{display:flex;gap:4px;list-style:none;}
+.nav-links a{font-size:12px;color:var(--t2);text-decoration:none;padding:5px 12px;border-radius:3px;transition:all .2s;}
+.nav-links a:hover{color:var(--tx);background:rgba(255,255,255,.04);}
+.nav-links a.active{color:var(--tx);}
+.nav-r{display:flex;gap:8px;align-items:center;}
+.nav-badge{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--gn);border:1px solid rgba(61,220,132,.2);padding:4px 10px;background:rgba(61,220,132,.06);}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh;padding-top:58px;}
+
+/* SIDEBAR */
+.sidebar{background:var(--bg2);border-right:1px solid var(--bd);padding:24px 0;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto;}
+.sb-section{margin-bottom:24px;}
+.sb-label{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;padding:0 20px;margin-bottom:8px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:12px;color:var(--t2);text-decoration:none;cursor:pointer;transition:all .15s;border-left:2px solid transparent;}
+.sb-item:hover{color:var(--tx);background:rgba(255,255,255,.03);}
+.sb-item.active{color:var(--tx);background:rgba(255,255,255,.04);border-left-color:var(--pu);}
+.sb-icon{width:14px;height:14px;opacity:.6;flex-shrink:0;}
+.sb-count{margin-left:auto;font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);background:rgba(255,255,255,.06);padding:1px 6px;border-radius:2px;}
+
+/* MAIN CONTENT */
+.main{padding:32px 40px;overflow-x:hidden;}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:32px;flex-wrap:wrap;}
+.tb-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--tx);margin-right:auto;}
+.tb-btn{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 16px;border:1px solid var(--bd);color:var(--t3);background:transparent;cursor:pointer;transition:all .2s;}
+.tb-btn:hover{color:var(--t2);border-color:var(--bd2);}
+.tb-btn.primary{background:var(--tx);color:var(--bg);border-color:var(--tx);}
+.tb-btn.primary:hover{opacity:.87;}
+
+/* SCAN INPUT */
+.scan-card{background:var(--bg2);border:1px solid var(--bd);padding:28px 32px;margin-bottom:28px;}
+.scan-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:16px;}
+.scan-row{display:flex;gap:12px;align-items:flex-end;}
+.scan-group{flex:1;}
+.scan-field-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1.5px;color:var(--t3);text-transform:uppercase;margin-bottom:6px;}
+.scan-input{width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Mono',monospace;font-size:12px;padding:10px 14px;outline:none;transition:border-color .2s;}
+.scan-input::placeholder{color:var(--t3);}
+.scan-input:focus{border-color:var(--pu);}
+.scan-btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:11px 24px;background:var(--pu);color:var(--bg);border:none;cursor:pointer;white-space:nowrap;transition:opacity .2s;flex-shrink:0;}
+.scan-btn:hover{opacity:.87;}
+.scan-note{font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);margin-top:10px;letter-spacing:.5px;}
+
+/* AI SELECTOR */
+.ai-selector{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.ai-chip{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border:1px solid var(--bd);color:var(--t3);cursor:pointer;transition:all .2s;user-select:none;}
+.ai-chip.on{color:var(--tx);border-color:var(--bd2);background:rgba(255,255,255,.04);}
+.ai-chip.chatgpt.on{border-color:rgba(61,220,132,.4);color:var(--gn);}
+.ai-chip.perplexity.on{border-color:rgba(139,124,248,.4);color:var(--pu);}
+.ai-chip.gemini.on{border-color:rgba(240,180,41,.4);color:var(--am);}
+.ai-chip.claude.on{border-color:rgba(237,234,224,.3);color:var(--t2);}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);margin-bottom:28px;}
+.stat-cell{background:var(--bg);padding:20px 24px;}
+.stat-label{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--tx);line-height:1;margin-bottom:4px;}
+.stat-sub{font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);letter-spacing:.5px;}
+.stat-delta{font-family:'DM Mono',monospace;font-size:8px;padding:2px 6px;margin-left:6px;}
+.delta-up{color:var(--gn);background:rgba(61,220,132,.08);}
+.delta-down{color:var(--rd);background:rgba(239,96,96,.08);}
+
+/* GRID 2COL */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd);border:1px solid var(--bd);margin-bottom:28px;}
+.card{background:var(--bg);padding:24px 28px;}
+.card-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--bd);}
+
+/* AI BARS */
+.ai-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.ai-bar-row:last-child{margin-bottom:0;}
+.ai-name{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--t2);width:80px;flex-shrink:0;}
+.ai-bar-bg{flex:1;height:4px;background:rgba(255,255,255,.06);}
+.ai-bar-fill{height:100%;transition:width .6s ease;}
+.ai-bar-val{font-family:'DM Mono',monospace;font-size:9px;color:var(--t2);width:36px;text-align:right;flex-shrink:0;}
+
+/* COMPETITOR TABLE */
+.comp-table{width:100%;}
+.comp-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd);}
+.comp-row:last-child{border-bottom:none;}
+.comp-rank{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--t3);width:24px;flex-shrink:0;}
+.comp-name{font-size:12px;font-weight:500;color:var(--tx);flex:1;}
+.comp-score{font-family:'DM Mono',monospace;font-size:10px;color:var(--t2);}
+.comp-badge{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1.5px;padding:2px 7px;border:1px solid;}
+.badge-you{color:var(--pu);border-color:rgba(139,124,248,.3);background:rgba(139,124,248,.06);}
+.badge-up{color:var(--gn);border-color:rgba(61,220,132,.3);}
+.badge-down{color:var(--rd);border-color:rgba(239,96,96,.3);}
+
+/* CITATION LIST */
+.cite-list{display:flex;flex-direction:column;gap:10px;}
+.cite-item{padding:12px 16px;border:1px solid var(--bd);background:rgba(255,255,255,.015);transition:border-color .2s;}
+.cite-item:hover{border-color:var(--bd2);}
+.cite-domain{font-family:'DM Mono',monospace;font-size:10px;color:var(--pu);margin-bottom:4px;}
+.cite-url{font-size:11px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px;}
+.cite-meta{display:flex;gap:8px;align-items:center;}
+.cite-count{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--t3);}
+.cite-ai{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1.5px;padding:1px 6px;border:1px solid var(--bd);}
+
+/* EMPTY STATE */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 40px;text-align:center;gap:16px;}
+.empty-icon{font-size:32px;opacity:.3;}
+.empty-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--t2);}
+.empty-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--t3);letter-spacing:1px;line-height:1.8;}
+
+/* WEEK LABEL */
+.week-row{display:flex;gap:6px;margin-bottom:12px;}
+.week-bar-wrap{flex:1;display:flex;flex-direction:column;gap:4px;align-items:center;}
+.week-bar-bg{width:100%;height:48px;background:rgba(255,255,255,.04);display:flex;align-items:flex-end;}
+.week-bar-f{width:100%;background:var(--pu);opacity:.6;transition:height .4s;}
+.week-day{font-family:'DM Mono',monospace;font-size:7px;color:var(--t3);letter-spacing:1px;}
+
+/* INSIGHT */
+.insight-row{display:flex;gap:10px;margin-bottom:12px;}
+.insight-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.insight-text{font-size:12px;font-weight:300;color:var(--t2);line-height:1.6;}
+.ins-ok{background:var(--gn);}
+.ins-warn{background:var(--am);}
+.ins-tip{background:var(--pu);}
+
+/* PAGINATION / TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:24px;}
+.tab{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:10px 18px;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
+.tab:hover{color:var(--t2);}
+.tab.active{color:var(--tx);border-bottom-color:var(--pu);}
+
+/* SCHEDULE BADGE */
+.schedule-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--bd);}
+.schedule-row:last-child{border-bottom:none;}
+.sch-time{font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);width:100px;flex-shrink:0;}
+.sch-label{font-size:12px;color:var(--t2);}
+.sch-status{margin-left:auto;font-family:'DM Mono',monospace;font-size:7px;letter-spacing:1.5px;padding:2px 8px;border:1px solid;}
+.sts-done{color:var(--gn);border-color:rgba(61,220,132,.25);}
+.sts-next{color:var(--am);border-color:rgba(240,180,41,.25);}
+.sts-sched{color:var(--t3);border-color:var(--bd);}
+
+@media(max-width:900px){
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  .layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .main{padding:20px;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .grid2{grid-template-columns:1fr;}
+  .scan-row{flex-direction:column;}
+  .scan-btn{width:100%;}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Geoscope ダッシュボード",
+  "description": "GEO出現率・競合比較・引用URLをリアルタイムで確認できるダッシュボード",
+  "applicationCategory": "BusinessApplication",
+  "offers": {"@type": "Offer","price": "0","priceCurrency": "JPY"}
+}
+</script>
+</head>
+<body>
+
+<!-- Ambient Glow -->
+<div class="gs-glow gs-glow-1"></div>
+<div class="gs-glow gs-glow-2"></div>
+
+<nav class="gs-nav">
+  <div style="display:flex;align-items:center;gap:28px;">
+    <a href="index.html" class="gs-nav-logo">
+      <div class="gs-nav-logo-dot"></div>
+      <span class="gs-nav-brand">Geoscope</span>
+    </a>
+    <ul class="gs-nav-links">
+      <li><a href="dashboard.html" class="active">Dashboard</a></li>
+      <li><a href="brands.html">Brands</a></li>
+      <li><a href="alerts.html">Alerts</a></li>
+      <li><a href="geo-article.html">GEO対策</a></li>
+      <li><a href="pricing.html">料金</a></li>
+    </ul>
+  </div>
+  <div class="gs-nav-right">
+    <div class="gs-status-pill">
+      <div class="gs-status-dot"></div>
+      System Online
+    </div>
+    <div style="width:1px;height:14px;background:var(--divider);margin:0 4px;"></div>
+    <span id="nav-user" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--t3);"></span>
+    <a href="settings.html" class="gs-btn gs-btn-ghost" style="padding:6px 12px;font-size:12px;">設定</a>
+    <button onclick="gsAuth ? gsAuth.logout() : (localStorage.clear(), location.href='/login.html')" class="gs-btn gs-btn-ghost" style="padding:6px 12px;font-size:12px;">Logout</button>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">メニュー</div>
+      <a class="sb-item active" href="#scan">
+        <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        スキャン
+      </a>
+      <a class="sb-item" href="#results">
+        <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        出現率
+      </a>
+      <a class="sb-item" href="#competitors">
+        <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        競合比較
+        <span class="sb-count">3</span>
+      </a>
+      <a class="sb-item" href="#citations">
+        <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        引用URL
+        <span class="sb-count">12</span>
+      </a>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">設定</div>
+      <a class="sb-item" href="#schedule">
+        <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        スケジュール
+      </a>
+      <a class="sb-item" href="support.html">
+        <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>
+        サポート
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- SCAN CARD -->
+    <div id="scan" class="scan-card">
+      <div class="scan-label">新規スキャン</div>
+      <div class="scan-row">
+        <div class="scan-group">
+          <div class="scan-field-label">ブランド名</div>
+          <input class="scan-input" type="text" placeholder="例：株式会社〇〇 / ブランド名" id="brand-input">
+          <!-- B-03修正: ログイン済みの場合にブランドセレクターを表示 -->
+          <select class="scan-input" id="brand-selector" style="display:none;margin-top:4px;font-size:10px;" onchange="onBrandSelect(this.value)">
+            <option value="">── ブランドに紐づけない ──</option>
+          </select>
+        </div>
+        <div class="scan-group">
+          <div class="scan-field-label">競合ブランド（任意・カンマ区切り）</div>
+          <input class="scan-input" type="text" placeholder="例：競合A, 競合B" id="comp-input">
+        </div>
+        <div class="scan-group" style="max-width:140px;">
+          <div class="scan-field-label">業種</div>
+          <select class="scan-input" id="industry-input" style="appearance:none;cursor:pointer;">
+            <option value="general">汎用</option>
+            <option value="saas">SaaS</option>
+            <option value="ec">EC・通販</option>
+            <option value="restaurant">飲食店</option>
+            <option value="consulting">コンサル</option>
+            <option value="media">メディア</option>
+            <option value="healthcare">医療・健康</option>
+            <option value="education">教育</option>
+          </select>
+        </div>
+        <button class="scan-btn" onclick="runScan()">スキャン実行 →</button>
+      </div>
+      <div class="ai-selector">
+        <div class="ai-chip chatgpt on" onclick="toggleChip(this)">ChatGPT</div>
+        <div class="ai-chip perplexity on" onclick="toggleChip(this)">Perplexity</div>
+        <div class="ai-chip gemini on" onclick="toggleChip(this)">Gemini</div>
+        <div class="ai-chip claude on" onclick="toggleChip(this)">Claude</div>
+      </div>
+      <div class="scan-note">※ スキャンにはAPIキーが必要です。サポートページでAPIキーの取得方法をご確認ください。</div>
+    </div>
+
+    <!-- DEMO DATA NOTICE -->
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--am);letter-spacing:1.5px;margin-bottom:20px;display:flex;align-items:center;gap:8px;">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--am);display:inline-block;"></span>
+      DEMO DATA — スキャンを実行するとリアルデータに切り替わります
+    </div>
+
+    <!-- STATS ROW -->
+    <div id="results" class="stats-row">
+      <div class="stat-cell">
+        <div class="stat-label">総合出現率</div>
+        <div class="stat-num">68<span style="font-size:20px;color:var(--t3);">%</span></div>
+        <div class="stat-sub">4AI平均 <span class="stat-delta delta-up">+5.2%</span></div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">引用URL数</div>
+        <div class="stat-num">12</div>
+        <div class="stat-sub">先週比 <span class="stat-delta delta-up">+3</span></div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">競合順位</div>
+        <div class="stat-num">2<span style="font-size:20px;color:var(--t3);">位</span></div>
+        <div class="stat-sub">3社中 <span class="stat-delta delta-up">↑1</span></div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">最終スキャン</div>
+        <div class="stat-num" style="font-size:20px;padding-top:6px;">今日</div>
+        <div class="stat-sub">14:32 自動スキャン</div>
+      </div>
+    </div>
+
+    <!-- AI BREAKDOWN + COMPETITOR -->
+    <div class="grid2">
+      <!-- AI別出現率 -->
+      <div class="card">
+        <div class="card-label">AI別出現率</div>
+        <div style="margin-bottom:24px;">
+          <div class="ai-bar-row">
+            <div class="ai-name" style="color:var(--gn);">ChatGPT</div>
+            <div class="ai-bar-bg"><div class="ai-bar-fill" style="width:82%;background:var(--gn);opacity:.7;"></div></div>
+            <div class="ai-bar-val">82%</div>
+          </div>
+          <div class="ai-bar-row">
+            <div class="ai-name" style="color:var(--pu);">Perplexity</div>
+            <div class="ai-bar-bg"><div class="ai-bar-fill" style="width:71%;background:var(--pu);opacity:.7;"></div></div>
+            <div class="ai-bar-val">71%</div>
+          </div>
+          <div class="ai-bar-row">
+            <div class="ai-name" style="color:var(--am);">Gemini</div>
+            <div class="ai-bar-bg"><div class="ai-bar-fill" style="width:58%;background:var(--am);opacity:.7;"></div></div>
+            <div class="ai-bar-val">58%</div>
+          </div>
+          <div class="ai-bar-row">
+            <div class="ai-name" style="color:var(--t2);">Claude</div>
+            <div class="ai-bar-bg"><div class="ai-bar-fill" style="width:41%;background:var(--t2);opacity:.5;"></div></div>
+            <div class="ai-bar-val">41%</div>
+          </div>
+        </div>
+
+        <div class="card-label" style="margin-top:24px;">週別トレンド</div>
+        <div class="week-row">
+          <div class="week-bar-wrap"><div class="week-bar-bg"><div class="week-bar-f" style="height:52%;"></div></div><div class="week-day">月</div></div>
+          <div class="week-bar-wrap"><div class="week-bar-bg"><div class="week-bar-f" style="height:61%;"></div></div><div class="week-day">火</div></div>
+          <div class="week-bar-wrap"><div class="week-bar-bg"><div class="week-bar-f" style="height:58%;"></div></div><div class="week-day">水</div></div>
+          <div class="week-bar-wrap"><div class="week-bar-bg"><div class="week-bar-f" style="height:74%;"></div></div><div class="week-day">木</div></div>
+          <div class="week-bar-wrap"><div class="week-bar-bg"><div class="week-bar-f" style="height:68%;"></div></div><div class="week-day">金</div></div>
+          <div class="week-bar-wrap"><div class="week-bar-bg"><div class="week-bar-f" style="height:72%;"></div></div><div class="week-day">土</div></div>
+          <div class="week-bar-wrap"><div class="week-bar-bg"><div class="week-bar-f" style="height:80%;opacity:1;"></div></div><div class="week-day" style="color:var(--pu);">今</div></div>
+        </div>
+      </div>
+
+      <!-- 競合比較 -->
+      <div id="competitors" class="card">
+        <div class="card-label">競合比較</div>
+        <div class="comp-table">
+          <div class="comp-row">
+            <div class="comp-rank">1</div>
+            <div class="comp-name">競合A <span class="comp-badge badge-down">↓2%</span></div>
+            <div class="comp-score">74%</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-rank" style="color:var(--pu);">2</div>
+            <div class="comp-name">あなた <span class="comp-badge badge-you">YOU</span></div>
+            <div class="comp-score" style="color:var(--pu);">68%</div>
+          </div>
+          <div class="comp-row">
+            <div class="comp-rank">3</div>
+            <div class="comp-name">競合B <span class="comp-badge badge-up">↑3%</span></div>
+            <div class="comp-score">51%</div>
+          </div>
+        </div>
+
+        <div class="card-label" style="margin-top:24px;">インサイト</div>
+        <div class="insight-row"><div class="insight-dot ins-ok"></div><div class="insight-text">ChatGPTでの出現率が高く推移しています</div></div>
+        <div class="insight-row"><div class="insight-dot ins-warn"></div><div class="insight-text">Claudeでの出現率が競合Aより23pt低い状態です</div></div>
+        <div class="insight-row"><div class="insight-dot ins-tip"></div><div class="insight-text">競合Aとの差は6ptまで縮まっています</div></div>
+      </div>
+    </div>
+
+    <!-- CITATION URLs -->
+    <div id="citations" class="card" style="margin-bottom:28px;">
+      <div class="card-label">引用URL一覧</div>
+      <div class="tabs">
+        <div class="tab active">すべて (12)</div>
+        <div class="tab">ChatGPT (5)</div>
+        <div class="tab">Perplexity (4)</div>
+        <div class="tab">Gemini (2)</div>
+        <div class="tab">Claude (1)</div>
+      </div>
+      <div class="cite-list">
+        <div class="cite-item">
+          <div class="cite-domain">example.com</div>
+          <div class="cite-url">https://example.com/blog/brand-review-2026</div>
+          <div class="cite-meta">
+            <span class="cite-count">引用 5回</span>
+            <span class="cite-ai" style="color:var(--gn);border-color:rgba(61,220,132,.2);">ChatGPT</span>
+            <span class="cite-ai" style="color:var(--pu);border-color:rgba(139,124,248,.2);">Perplexity</span>
+          </div>
+        </div>
+        <div class="cite-item">
+          <div class="cite-domain">media-site.jp</div>
+          <div class="cite-url">https://media-site.jp/articles/geo-tools-comparison</div>
+          <div class="cite-meta">
+            <span class="cite-count">引用 3回</span>
+            <span class="cite-ai" style="color:var(--gn);border-color:rgba(61,220,132,.2);">ChatGPT</span>
+            <span class="cite-ai" style="color:var(--am);border-color:rgba(240,180,41,.2);">Gemini</span>
+          </div>
+        </div>
+        <div class="cite-item">
+          <div class="cite-domain">review-japan.com</div>
+          <div class="cite-url">https://review-japan.com/saas/geoscope-review</div>
+          <div class="cite-meta">
+            <span class="cite-count">引用 2回</span>
+            <span class="cite-ai" style="color:var(--pu);border-color:rgba(139,124,248,.2);">Perplexity</span>
+          </div>
+        </div>
+        <div class="cite-item">
+          <div class="cite-domain">tech-blog.net</div>
+          <div class="cite-url">https://tech-blog.net/marketing/ai-search-optimization-2026</div>
+          <div class="cite-meta">
+            <span class="cite-count">引用 1回</span>
+            <span class="cite-ai" style="color:var(--t2);border-color:var(--bd);">Claude</span>
+          </div>
+        </div>
+        <div class="cite-item">
+          <div class="cite-domain">seo-news.jp</div>
+          <div class="cite-url">https://seo-news.jp/geo/brand-tracking-tools</div>
+          <div class="cite-meta">
+            <span class="cite-count">引用 1回</span>
+            <span class="cite-ai" style="color:var(--pu);border-color:rgba(139,124,248,.2);">Perplexity</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div id="schedule" class="card">
+      <div class="card-label">スキャンスケジュール</div>
+      <div class="schedule-row">
+        <div class="sch-time">今日 14:32</div>
+        <div class="sch-label">週次自動スキャン</div>
+        <div class="sch-status sts-done">完了</div>
+      </div>
+      <div class="schedule-row">
+        <div class="sch-time">来週月曜</div>
+        <div class="sch-label">週次自動スキャン（予定）</div>
+        <div class="sch-status sts-next">予定</div>
+      </div>
+      <div class="schedule-row">
+        <div class="sch-time">先週</div>
+        <div class="sch-label">週次自動スキャン</div>
+        <div class="sch-status sts-done">完了</div>
+      </div>
+      <div class="schedule-row">
+        <div class="sch-time">2週前</div>
+        <div class="sch-label">週次自動スキャン</div>
+        <div class="sch-status sts-done">完了</div>
+      </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:12px;">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);letter-spacing:1px;">スキャン頻度：週1回（Free）</span>
+        <a href="pricing.html" style="font-family:'DM Mono',monospace;font-size:8px;color:var(--pu);letter-spacing:1.5px;text-decoration:none;border:1px solid rgba(139,124,248,.3);padding:3px 10px;">日次にアップグレード →</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ========== APIキー管理（localStorage）==========
+const KEYS = {
+  perplexity: 'gs_key_perplexity',
+  openai:     'gs_key_openai',
+  gemini:     'gs_key_gemini',
+  anthropic:  'gs_key_anthropic',
+};
+
+function loadKeys() {
+  return {
+    perplexity: localStorage.getItem(KEYS.perplexity) || '',
+    openai:     localStorage.getItem(KEYS.openai) || '',
+    gemini:     localStorage.getItem(KEYS.gemini) || '',
+    anthropic:  localStorage.getItem(KEYS.anthropic) || '',
+  };
+}
+
+function saveKey(name, value) {
+  localStorage.setItem(KEYS[name], value.trim());
+}
+
+// ========== AIチップ切り替え ==========
+function toggleChip(el) {
+  el.classList.toggle('on');
+}
+
+function getSelectedAIs() {
+  return [...document.querySelectorAll('.ai-chip.on')].map(c => c.textContent.trim().toLowerCase());
+}
+
+// ========== スキャン実行 ==========
+async function runScan() {
+  const brand = document.getElementById('brand-input').value.trim();
+  const competitors = (document.getElementById('comp-input').value || '')
+    .split(',').map(s => s.trim()).filter(Boolean);
+
+  if (!brand) {
+    document.getElementById('brand-input').style.borderColor = 'var(--rd)';
+    setTimeout(() => document.getElementById('brand-input').style.borderColor = '', 1500);
+    return;
+  }
+
+  const keys = loadKeys();
+  const selectedAIs = getSelectedAIs();
+
+  // 選択されたAIのキーがあるか確認
+  const apis = {};
+  const missing = [];
+  if (selectedAIs.includes('perplexity')) {
+    keys.perplexity ? (apis.perplexity = keys.perplexity) : missing.push('Perplexity');
+  }
+  if (selectedAIs.includes('chatgpt')) {
+    keys.openai ? (apis.openai = keys.openai) : missing.push('OpenAI');
+  }
+  if (selectedAIs.includes('gemini')) {
+    keys.gemini ? (apis.gemini = keys.gemini) : missing.push('Gemini');
+  }
+  if (selectedAIs.includes('claude')) {
+    keys.anthropic ? (apis.anthropic = keys.anthropic) : missing.push('Anthropic');
+  }
+
+  if (Object.keys(apis).length === 0) {
+    showToast('APIキーを設定してください → 設定パネルを開く', 'warn');
+    openKeyPanel();
+    return;
+  }
+
+  if (missing.length > 0) {
+    showToast(`${missing.join('・')}のキーがありません。スキップして実行します`, 'warn');
+  }
+
+  // ボタン状態
+  const btn = document.querySelector('.scan-btn');
+  btn.textContent = 'スキャン中...';
+  btn.style.opacity = '.5';
+  btn.disabled = true;
+
+  // デモ notice 非表示
+  const notice = document.querySelector('[style*="DEMO DATA"]');
+  if (notice) notice.style.display = 'none';
+
+  try {
+    const resp = await fetch('/api/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brand, competitors, apis }),
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.error || 'スキャン失敗');
+    }
+
+    const data = await resp.json();
+    renderResults(data);
+    showToast('スキャン完了！', 'ok');
+  } catch (e) {
+    showToast('エラー: ' + e.message, 'error');
+  } finally {
+    btn.textContent = 'スキャン実行 →';
+    btn.style.opacity = '';
+    btn.disabled = false;
+  }
+}
+
+// ========== 結果レンダリング ==========
+function renderResults(data) {
+  const s = data.summary;
+
+  // 統計
+  document.querySelector('.stats-row').innerHTML = `
+    <div class="stat-cell">
+      <div class="stat-label">総合出現率</div>
+      <div class="stat-num">${s.avgRate}<span style="font-size:20px;color:var(--t3);">%</span></div>
+      <div class="stat-sub">4AI平均</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">引用URL数</div>
+      <div class="stat-num">${s.totalCitations}</div>
+      <div class="stat-sub">Perplexity引用</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">スキャン完了</div>
+      <div class="stat-num" style="font-size:20px;padding-top:6px;">${Object.keys(data.results).length}AI</div>
+      <div class="stat-sub">対象AI数</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">最終スキャン</div>
+      <div class="stat-num" style="font-size:20px;padding-top:6px;">今</div>
+      <div class="stat-sub">${new Date(data.scannedAt).toLocaleTimeString('ja-JP')}</div>
+    </div>
+  `;
+
+  // AI別バー
+  const byAI = s.byAI;
+  const aiColors = { chatgpt: 'var(--gn)', perplexity: 'var(--pu)', gemini: 'var(--am)', claude: 'var(--t2)' };
+  const aiLabels = { chatgpt: 'ChatGPT', perplexity: 'Perplexity', gemini: 'Gemini', claude: 'Claude' };
+  const barHTML = Object.entries(byAI).filter(([,v]) => v !== null).map(([ai, rate]) => `
+    <div class="ai-bar-row">
+      <div class="ai-name" style="color:${aiColors[ai]};">${aiLabels[ai]}</div>
+      <div class="ai-bar-bg"><div class="ai-bar-fill" style="width:${rate}%;background:${aiColors[ai]};opacity:.7;"></div></div>
+      <div class="ai-bar-val">${rate}%</div>
+    </div>
+  `).join('');
+  document.querySelector('.ai-bar-row').closest('.card').querySelector('div[style*="margin-bottom:24px"]').innerHTML = barHTML;
+
+  // 引用URL
+  if (s.citations.length > 0) {
+    const citeHTML = s.citations.map(c => `
+      <div class="cite-item">
+        <div class="cite-domain">${c.domain}</div>
+        <div class="cite-url">${c.url}</div>
+        <div class="cite-meta">
+          <span class="cite-ai" style="color:var(--pu);border-color:rgba(139,124,248,.2);">Perplexity</span>
+        </div>
+      </div>
+    `).join('');
+    document.querySelector('.cite-list').innerHTML = citeHTML;
+  }
+}
+
+// ========== APIキー設定パネル ==========
+function openKeyPanel() {
+  if (document.getElementById('key-panel')) return;
+  const keys = loadKeys();
+  const panel = document.createElement('div');
+  panel.id = 'key-panel';
+  panel.style.cssText = `
+    position:fixed;top:58px;right:0;bottom:0;width:320px;
+    background:var(--bg2);border-left:1px solid var(--bd);
+    z-index:400;padding:24px;overflow-y:auto;
+  `;
+  panel.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;">APIキー設定</div>
+      <button onclick="document.getElementById('key-panel').remove()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:18px;">×</button>
+    </div>
+    ${['perplexity','openai','gemini','anthropic'].map(k => `
+      <div style="margin-bottom:16px;">
+        <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:6px;">${k.toUpperCase()}</div>
+        <div style="display:flex;gap:6px;">
+          <input id="key-${k}" type="password" value="${keys[k]}"
+            placeholder="${k === 'openai' ? 'sk-...' : k === 'anthropic' ? 'sk-ant-...' : 'pplx-...'}"
+            style="flex:1;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Mono',monospace;font-size:10px;padding:8px 10px;outline:none;">
+          <button onclick="saveKey('${k}', document.getElementById('key-${k}').value); showToast('保存しました', 'ok')"
+            style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;padding:8px 12px;background:var(--tx);color:var(--bg);border:none;cursor:pointer;">保存</button>
+        </div>
+      </div>
+    `).join('')}
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--bd);">
+      <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);line-height:1.8;">
+        キーはブラウザのlocalStorageに保存されます。サーバーには送信されません。
+      </div>
+    </div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--bd);">
+      <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:10px;">通知メール</div>
+      <div style="display:flex;gap:6px;">
+        <input id="notify-email" type="email" placeholder="通知先メールアドレス"
+          value="${localStorage.getItem('gs_notify_email')||''}"
+          style="flex:1;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Mono',monospace;font-size:10px;padding:8px 10px;outline:none;">
+        <button onclick="localStorage.setItem('gs_notify_email',document.getElementById('notify-email').value);showToast('保存しました','ok')"
+          style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;padding:8px 12px;background:var(--tx);color:var(--bg);border:none;cursor:pointer;">保存</button>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--t3);margin-top:6px;line-height:1.6;">スキャン完了時と週次レポートを送信</div>
+    </div>
+    <a href="support.html" style="display:block;margin-top:12px;font-family:'DM Mono',monospace;font-size:8px;color:var(--pu);letter-spacing:1px;text-decoration:none;">APIキーの取得方法 →</a>
+  `;
+  document.body.appendChild(panel);
+}
+
+// ========== Toast ==========
+// B-12修正: showToast() を削除して gsToast() に統一
+// gs-client.js の gsToast() を使用するためのエイリアス
+function showToast(msg, type = 'ok') {
+  if (typeof gsToast === 'function') {
+    gsToast(msg, type);
+  }
+}
+
+// ========== スキャン履歴 ==========
+const HISTORY_KEY = 'gs_scan_history';
+const MAX_HISTORY = 20;
+
+function saveHistory(data) {
+  try {
+    const history = getHistory();
+    history.unshift({
+      brand: data.brand,
+      avgRate: data.summary.avgRate,
+      byAI: data.summary.byAI,
+      totalCitations: data.summary.totalCitations,
+      scannedAt: data.scannedAt,
+    });
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, MAX_HISTORY)));
+  } catch {}
+}
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
+}
+
+function renderHistory() {
+  const history = getHistory();
+  if (history.length === 0) return;
+
+  // 既存の履歴パネルがあれば削除
+  document.getElementById('history-panel')?.remove();
+
+  const panel = document.createElement('div');
+  panel.id = 'history-panel';
+  panel.className = 'card';
+  panel.style.marginBottom = '28px';
+  panel.innerHTML = `
+    <div class="card-label">スキャン履歴（直近${history.length}件）</div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead>
+          <tr>
+            <th style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;padding:8px 12px;border-bottom:1px solid var(--bd);text-align:left;">ブランド</th>
+            <th style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;padding:8px 12px;border-bottom:1px solid var(--bd);text-align:center;">平均</th>
+            <th style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;padding:8px 12px;border-bottom:1px solid var(--bd);text-align:center;">GPT</th>
+            <th style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;padding:8px 12px;border-bottom:1px solid var(--bd);text-align:center;">Pplx</th>
+            <th style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;padding:8px 12px;border-bottom:1px solid var(--bd);text-align:center;">Gem</th>
+            <th style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;padding:8px 12px;border-bottom:1px solid var(--bd);text-align:center;">Claude</th>
+            <th style="font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;padding:8px 12px;border-bottom:1px solid var(--bd);text-align:right;">日時</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${history.map(h => {
+            const d = new Date(h.scannedAt);
+            const dateStr = `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+            const cell = (v) => v !== null ? `${v}%` : '<span style="color:var(--t3)">—</span>';
+            return `<tr>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--bd);color:var(--tx);font-weight:500;">${h.brand}</td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--bd);text-align:center;color:var(--pu);font-family:'DM Mono',monospace;">${h.avgRate}%</td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--bd);text-align:center;color:var(--t2);font-family:'DM Mono',monospace;">${cell(h.byAI?.chatgpt)}</td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--bd);text-align:center;color:var(--t2);font-family:'DM Mono',monospace;">${cell(h.byAI?.perplexity)}</td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--bd);text-align:center;color:var(--t2);font-family:'DM Mono',monospace;">${cell(h.byAI?.gemini)}</td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--bd);text-align:center;color:var(--t2);font-family:'DM Mono',monospace;">${cell(h.byAI?.claude)}</td>
+              <td style="padding:8px 12px;border-bottom:1px solid var(--bd);text-align:right;color:var(--t3);font-family:'DM Mono',monospace;font-size:9px;">${dateStr}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:12px;text-align:right;">
+      <button onclick="clearHistory()" style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--t3);background:none;border:1px solid var(--bd);padding:4px 12px;cursor:pointer;">履歴をクリア</button>
+    </div>
+  `;
+
+  // スケジュールカードの前に挿入
+  const schedule = document.getElementById('schedule');
+  schedule?.parentNode.insertBefore(panel, schedule);
+}
+
+function clearHistory() {
+  localStorage.removeItem(HISTORY_KEY);
+  document.getElementById('history-panel')?.remove();
+  showToast('履歴を削除しました', 'ok');
+}
+
+// ========== プログレスバー ==========
+function showProgress(step, total, label) {
+  let bar = document.getElementById('scan-progress');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'scan-progress';
+    bar.style.cssText = 'position:fixed;top:58px;left:0;right:0;z-index:600;height:3px;background:rgba(255,255,255,.06);';
+    bar.innerHTML = '<div id="scan-progress-fill" style="height:100%;background:var(--pu);transition:width .3s;width:0;"></div>';
+    document.body.appendChild(bar);
+  }
+  const pct = Math.round((step / total) * 100);
+  document.getElementById('scan-progress-fill').style.width = pct + '%';
+  const btn = document.querySelector('.scan-btn');
+  if (btn) btn.textContent = `スキャン中... ${pct}%`;
+}
+
+function hideProgress() {
+  document.getElementById('scan-progress')?.remove();
+}
+
+// ========== 初期化 ==========
+document.addEventListener('DOMContentLoaded', () => {
+  // 認証チェック
+  if (typeof gsIsLoggedIn === 'function' && !gsIsLoggedIn()) {
+    window.location.href = '/login.html'; return;
+  }
+
+  // brands.htmlからのブランド引き継ぎ
+  const brandFromSession = sessionStorage.getItem('gs_scan_brand_name');
+  if (brandFromSession) {
+    const inp = document.getElementById('brand-input');
+    if (inp) inp.value = brandFromSession;
+    sessionStorage.removeItem('gs_scan_brand_name');
+    sessionStorage.removeItem('gs_scan_brand_id');
+  }
+
+  // ユーザー名表示
+  const profile = typeof gsGetProfile === 'function' ? gsGetProfile() : null;
+  const navUser = document.getElementById('nav-user');
+  if (profile && navUser) navUser.textContent = profile.display_name || profile.email || '';
+
+  // navにキー設定ボタン追加
+  const navR = document.querySelector('.nav-r');
+  const keyBtn = document.createElement('button');
+  keyBtn.textContent = 'APIキー設定';
+  keyBtn.style.cssText = `
+    font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;
+    text-transform:uppercase;padding:6px 14px;border:1px solid var(--bd);
+    color:var(--t3);background:transparent;cursor:pointer;
+  `;
+  keyBtn.onclick = openKeyPanel;
+  navR.insertBefore(keyBtn, navR.firstChild);
+
+  // APIキーが1つもない場合は自動でパネルを開く
+  const keys = loadKeys();
+  const hasAnyKey = Object.values(keys).some(v => v);
+  if (!hasAnyKey) {
+    setTimeout(openKeyPanel, 800);
+  }
+
+  // 履歴表示
+  renderHistory();
+
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Sidebar active
+  document.querySelectorAll('.sb-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.sb-item').forEach(s => s.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+});
+
+// runScanに履歴保存・プログレスを追加でパッチ
+const _origRunScan = runScan;
+window.runScan = async function() {
+  const brand = document.getElementById('brand-input').value.trim();
+  const competitors = (document.getElementById('comp-input').value || '')
+    .split(',').map(s => s.trim()).filter(Boolean);
+  if (!brand) {
+    document.getElementById('brand-input').style.borderColor = 'var(--rd)';
+    setTimeout(() => document.getElementById('brand-input').style.borderColor = '', 1500);
+    return;
+  }
+  const keys = loadKeys();
+  const selectedAIs = getSelectedAIs();
+  const apis = {};
+  const missing = [];
+  if (selectedAIs.includes('perplexity') && keys.perplexity) apis.perplexity = keys.perplexity; else if (selectedAIs.includes('perplexity')) missing.push('Perplexity');
+  if (selectedAIs.includes('chatgpt') && keys.openai) apis.openai = keys.openai; else if (selectedAIs.includes('chatgpt')) missing.push('OpenAI');
+  if (selectedAIs.includes('gemini') && keys.gemini) apis.gemini = keys.gemini; else if (selectedAIs.includes('gemini')) missing.push('Gemini');
+  if (selectedAIs.includes('claude') && keys.anthropic) apis.anthropic = keys.anthropic; else if (selectedAIs.includes('claude')) missing.push('Anthropic');
+
+  if (Object.keys(apis).length === 0) { showToast('APIキーを設定してください', 'warn'); openKeyPanel(); return; }
+  if (missing.length > 0) showToast(`${missing.join('・')}のキーがありません。スキップします`, 'warn');
+
+  const btn = document.querySelector('.scan-btn');
+  btn.style.opacity = '.5'; btn.disabled = true;
+  const notice = document.querySelector('[style*="DEMO DATA"]');
+  if (notice) notice.style.display = 'none';
+
+  showProgress(1, 4, 'スキャン開始');
+
+  // B-04修正: fetch()オプションオブジェクト内のconst宣言を外に移動
+  const industry = document.getElementById("industry-input")?.value || "general";
+
+  try {
+    const resp = await fetch('/api/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ brand, competitors, apis, industry }),
+    });
+    showProgress(3, 4, '集計中');
+    if (!resp.ok) { const err = await resp.json(); throw new Error(err.error || 'スキャン失敗'); }
+    const data = await resp.json();
+
+    if (data.errors) {
+      Object.entries(data.errors).forEach(([ai, msg]) => showToast(`${ai}: ${msg}`, 'warn'));
+    }
+
+    showProgress(4, 4, '完了');
+    renderResults(data);
+    saveHistory(data);
+    renderHistory();
+    showToast('スキャン完了！', 'ok');
+
+    // Supabaseに自動保存（ログイン済みの場合）
+    if (gsIsLoggedIn()) {
+      // B-03修正: セレクターのbrand_idを優先し、なければsessionStorageを参照
+      const selectorEl = document.getElementById('brand-selector');
+      const brandIdFromSelector = selectorEl?.value || null;
+      const brandIdFromSession = sessionStorage.getItem('gs_scan_brand_id') || null;
+      const brandId = brandIdFromSelector || brandIdFromSession || null;
+      fetch('/api/scan?action=save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${gsToken ? gsToken() : ''}`,
+        },
+        body: JSON.stringify({ scan_data: data, brand_id: brandId }),
+      }).then(r => {
+        if (r.ok) showToast('スキャン結果を保存しました', 'ok');
+      }).catch(() => {}); // サイレント失敗
+    }
+
+    // メール通知（設定されている場合）
+    const notifyEmail = localStorage.getItem('gs_notify_email');
+    if(notifyEmail){
+      fetch('/api/report',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({type:'scan_complete',email:notifyEmail,scanData:data})
+      }).catch(()=>{});
+    }
+  } catch (e) {
+    showToast('エラー: ' + e.message, 'error');
+  } finally {
+    btn.textContent = 'スキャン実行 →'; btn.style.opacity = ''; btn.disabled = false;
+    setTimeout(hideProgress, 800);
+  }
+};
+// ========== B-03修正: ブランドセレクター ==========
+async function loadBrandSelector() {
+  if (!gsIsLoggedIn()) return;
+  try {
+    const resp = await fetch('/api/brands?action=list', {
+      headers: { 'Authorization': `Bearer ${gsToken ? gsToken() : ''}` },
+    });
+    if (!resp.ok) return;
+    const { brands } = await resp.json();
+    const sel = document.getElementById('brand-selector');
+    if (!sel || !brands?.length) return;
+
+    // 既存オプションをリセット
+    sel.innerHTML = '<option value="">── ブランドに紐づけない ──</option>';
+    brands.forEach(b => {
+      const opt = document.createElement('option');
+      opt.value = b.id;
+      opt.textContent = b.name;
+      sel.appendChild(opt);
+    });
+    sel.style.display = '';
+
+    // sessionStorage に brand_id がある場合は選択状態にする
+    const preselect = sessionStorage.getItem('gs_scan_brand_id');
+    if (preselect) sel.value = preselect;
+  } catch (e) {
+    // サイレント失敗
+  }
+}
+
+function onBrandSelect(brandId) {
+  const inp = document.getElementById('brand-input');
+  if (!brandId || !inp) return;
+  // 選択したブランド名をテキスト入力に反映
+  const sel = document.getElementById('brand-selector');
+  const opt = sel?.options[sel.selectedIndex];
+  if (opt && opt.value) inp.value = opt.textContent;
+}
+
+// ページロード時にブランドセレクターを初期化
+document.addEventListener('DOMContentLoaded', () => {
+  if (gsIsLoggedIn()) loadBrandSelector();
+});
+
+</script>
+<script>
+// ===== 共有URL生成 =====
+async function createShare() {
+  const history = getHistory();
+  if (!history.length) { showToast('スキャン結果がありません', 'warn'); return; }
+  try {
+    const latest = history[0];
+    const shareData = {
+      brand_name: latest.brand,
+      avg_rate: latest.avgRate,
+      by_ai: latest.byAI,
+      total_citations: latest.totalCitations || 0,
+      scanned_at: latest.scannedAt,
+      citations: [],
+    };
+    const encoded = btoa(encodeURIComponent(JSON.stringify(shareData)));
+    const shareUrl = location.origin + '/share.html?data=' + encoded;
+    await navigator.clipboard.writeText(shareUrl);
+    showToast('共有URLをコピーしました', 'ok');
+  } catch(e) { showToast('コピー失敗: ' + e.message, 'error'); }
+}
+
+// ===== CSVエクスポート =====
+function exportCsv() {
+  const history = getHistory();
+  if (!history.length) { showToast('エクスポートするデータがありません', 'warn'); return; }
+  const headers = ['日時','ブランド','平均(%)','ChatGPT(%)','Perplexity(%)','Gemini(%)','Claude(%)','引用URL数'];
+  const rows = history.map(h => [
+    new Date(h.scannedAt).toLocaleString('ja-JP'),
+    h.brand, h.avgRate,
+    h.byAI?.chatgpt??'', h.byAI?.perplexity??'', h.byAI?.gemini??'', h.byAI?.claude??'',
+    h.totalCitations??0,
+  ]);
+  const csv = '\uFEFF' + [headers,...rows].map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = 'geoscope_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  showToast('エクスポートしました', 'ok');
+}
+</script>
+<script src="/gs-client.js"></script>
+<script src="/themes.js"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>{initTheme();mountThemeButton();});</script>
+<script>
+// ===== Supabase Realtime：自動スキャン完了通知 =====
+document.addEventListener('DOMContentLoaded', () => {
+  const supabaseUrl = window.GS_SUPABASE_URL;
+  const supabaseAnon = window.GS_SUPABASE_ANON;
+  if (!supabaseUrl || !supabaseAnon || !gsIsLoggedIn()) return;
+
+  const user = gsGetUser();
+  if (!user) return;
+
+  const wsUrl = supabaseUrl.replace('https://', 'wss://').replace('http://', 'ws://');
+  const token = gsToken ? gsToken() : '';
+
+  try {
+    const ws = new WebSocket(`${wsUrl}/realtime/v1/websocket?apikey=${supabaseAnon}&vsn=1.0.0`);
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        topic: `realtime:public:scans:user_id=eq.${user.id}`,
+        event: 'phx_join',
+        payload: { user_token: token },
+        ref: '1',
+      }));
+    };
+    ws.onmessage = (msg) => {
+      try {
+        const data = JSON.parse(msg.data);
+        if (data.event === 'INSERT' && data.payload?.record) {
+          const rec = data.payload.record;
+          showToast(`✓ ${rec.brand_name} のスキャン完了 (${rec.avg_rate}%)`, 'ok');
+          renderHistory();
+        }
+      } catch {}
+    };
+  } catch {}
+});
+</script>
+</body>
+</html>

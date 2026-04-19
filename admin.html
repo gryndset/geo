@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="canonical" href="https://geoscope.jp/admin.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理者ダッシュボード — Geoscope</title>
+<meta name="description" content="管理者ダッシュボード — Geoscope | システム管理">
+<link rel="stylesheet" href="/gs-design.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap">
+<style>
+:root{--bg:#070710;--bg2:#0b0b1c;--sf:#10101f;--bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.12);--tx:#edeae0;--t2:rgba(237,234,224,.52);--t3:rgba(237,234,224,.22);--gn:#3ddc84;--am:#f0b429;--rd:#ef6060;--pu:#8b7cf8;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(7,7,16,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
+.nl{text-decoration:none;}
+.nlm{font-family:'Cormorant Garamond',serif;font-size:19px;letter-spacing:7px;text-transform:uppercase;color:var(--tx);}
+.nls{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;}
+.admin-badge{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--am);border:1px solid rgba(240,180,41,.2);padding:3px 8px;margin-left:12px;}
+.main{max-width:1100px;margin:0 auto;padding:80px 40px 80px;}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:32px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);margin-bottom:32px;}
+.stat{background:var(--bg);padding:24px;}
+.stat-label{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;line-height:1;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd);border:1px solid var(--bd);margin-bottom:24px;}
+.card{background:var(--bg);padding:24px;}
+.card-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--bd);}
+.plan-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.plan-name{font-family:'DM Mono',monospace;font-size:9px;color:var(--t2);width:60px;}
+.plan-bar-bg{flex:1;height:6px;background:rgba(255,255,255,.06);}
+.plan-bar-fill{height:100%;}
+.plan-count{font-family:'DM Mono',monospace;font-size:9px;color:var(--t2);width:30px;text-align:right;}
+.scan-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--bd);font-size:12px;}
+.scan-row:last-child{border-bottom:none;}
+.scan-brand{flex:1;font-weight:500;}
+.scan-rate{font-family:'DM Mono',monospace;font-size:11px;color:var(--pu);}
+.scan-time{font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);}
+.btn{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:8px 16px;border:1px solid var(--bd);color:var(--t3);background:transparent;cursor:pointer;transition:all .2s;}
+.btn:hover{color:var(--t2);border-color:var(--bd2);}
+.btn-primary{background:var(--tx);color:var(--bg);border-color:var(--tx);}
+@media(max-width:720px){
+  nav{padding:0 20px;}
+  .main{padding:80px 20px 60px;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .grid2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nl">
+    <div class="nlm">Geoscope</div>
+    <div class="nls">GEO Tracking</div>
+  </a>
+  <div style="display:flex;align-items:center;">
+    <span class="admin-badge">ADMIN</span>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <a href="dashboard.html" style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);text-decoration:none;padding:6px 14px;border:1px solid var(--bd);">← ダッシュボード</a>
+  </div>
+</nav>
+
+<main class="main">
+  <div class="page-title">管理者ダッシュボード</div>
+
+  <div class="stats-row">
+    <div class="stat"><div class="stat-label">総ユーザー数</div><div class="stat-num" id="s-users">—</div></div>
+    <div class="stat"><div class="stat-label">総スキャン数</div><div class="stat-num" id="s-scans">—</div></div>
+    <div class="stat"><div class="stat-label">総ブランド数</div><div class="stat-num" id="s-brands">—</div></div>
+    <div class="stat"><div class="stat-label">最終更新</div><div class="stat-num" id="s-updated" style="font-size:18px;padding-top:8px;">—</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-label">プラン分布</div>
+      <div id="plan-dist"><div style="color:var(--t3);font-size:13px;">読み込み中...</div></div>
+    </div>
+    <div class="card">
+      <div class="card-label">直近スキャン</div>
+      <div id="recent-scans"><div style="color:var(--t3);font-size:13px;">読み込み中...</div></div>
+    </div>
+  </div>
+
+  <!-- スキャン推移グラフ -->
+  <div class="grid2" style="margin-bottom:24px;">
+    <div class="card">
+      <div class="card-label">直近7日間のスキャン数</div>
+      <div style="position:relative;height:160px;">
+        <canvas id="scan-chart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">プラン別ユーザー構成</div>
+      <div style="position:relative;height:160px;display:flex;align-items:center;justify-content:center;">
+        <canvas id="plan-chart" style="max-height:140px;max-width:140px;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    <button class="btn" onclick="runCron()">Cronを手動実行</button>
+    <button class="btn" onclick="loadStats()">更新</button>
+    <a href="settings.html" class="btn">設定へ</a>
+  </div>
+</main>
+
+<script src="/gs-client.js"></script>
+<script src="/themes.js"></script>
+<script>
+gsAuth.requireLogin();
+initTheme();
+mountThemeButton();
+
+document.addEventListener('DOMContentLoaded', loadStats);
+
+
+let scanChartInstance = null;
+let planChartInstance = null;
+
+async function loadStats() {
+  try {
+    const data = await gsApi('/api/admin?action=stats');
+    document.getElementById('s-users').textContent = data.users?.toLocaleString() || 0;
+    document.getElementById('s-scans').textContent = data.scans?.toLocaleString() || 0;
+    document.getElementById('s-brands').textContent = data.brands?.toLocaleString() || 0;
+    document.getElementById('s-updated').textContent = new Date().toLocaleTimeString('ja-JP');
+
+    // プラン分布（バー）
+    const plans = data.plan_distribution || {};
+    const total = Object.values(plans).reduce((a, b) => a + b, 0) || 1;
+    const PLAN_COLORS = {free:'var(--t3)', pro:'var(--pu)', business:'var(--gn)'};
+    document.getElementById('plan-dist').innerHTML = Object.entries(plans).map(([plan, count]) => `
+      <div class="plan-bar-row">
+        <div class="plan-name">${plan.toUpperCase()}</div>
+        <div class="plan-bar-bg"><div class="plan-bar-fill" style="width:${Math.round(count/total*100)}%;background:${PLAN_COLORS[plan]};opacity:.7;"></div></div>
+        <div class="plan-count">${count}</div>
+      </div>
+    `).join('');
+
+    // 直近スキャン
+    const scans = data.recent_scans || [];
+    document.getElementById('recent-scans').innerHTML = scans.map(s => `
+      <div class="scan-row">
+        <div class="scan-brand">${s.brand_name}</div>
+        <div class="scan-rate">${s.avg_rate}%</div>
+        <div class="scan-time">${new Date(s.scanned_at).toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+    `).join('') || '<div style="color:var(--t3);font-size:13px;">データなし</div>';
+
+    // ===== Chart.js グラフ =====
+
+    // 日別スキャン数（棒グラフ）
+    const daily = data.daily_scans || [];
+    const scanCtx = document.getElementById('scan-chart').getContext('2d');
+    if (scanChartInstance) scanChartInstance.destroy();
+    scanChartInstance = new Chart(scanCtx, {
+      type: 'bar',
+      data: {
+        labels: daily.map(d => {
+          const dt = new Date(d.date + 'T00:00:00');
+          return (dt.getMonth()+1) + '/' + dt.getDate();
+        }),
+        datasets: [{
+          label: 'スキャン数',
+          data: daily.map(d => d.count),
+          backgroundColor: 'rgba(139,124,248,.4)',
+          borderColor: 'rgba(139,124,248,.8)',
+          borderWidth: 1,
+          borderRadius: 3,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(11,11,28,.95)',
+            titleFont: { family: 'DM Mono', size: 9 },
+            bodyFont: { family: 'DM Mono', size: 9 },
+            callbacks: { label: ctx => ' ' + ctx.parsed.y + '件' },
+          },
+        },
+        scales: {
+          x: {
+            ticks: { color: 'rgba(237,234,224,.3)', font: { family: 'DM Mono', size: 9 } },
+            grid: { color: 'rgba(255,255,255,.04)' },
+          },
+          y: {
+            ticks: { color: 'rgba(237,234,224,.3)', font: { family: 'DM Mono', size: 9 }, stepSize: 1 },
+            grid: { color: 'rgba(255,255,255,.04)' },
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+
+    // プランドーナツグラフ
+    const planCtx = document.getElementById('plan-chart').getContext('2d');
+    if (planChartInstance) planChartInstance.destroy();
+    const planEntries = Object.entries(plans);
+    const PLAN_CHART_COLORS = {
+      free: 'rgba(237,234,224,.2)',
+      pro: 'rgba(139,124,248,.7)',
+      business: 'rgba(61,220,132,.7)',
+    };
+    planChartInstance = new Chart(planCtx, {
+      type: 'doughnut',
+      data: {
+        labels: planEntries.map(([p]) => p.toUpperCase()),
+        datasets: [{
+          data: planEntries.map(([,c]) => c || 0),
+          backgroundColor: planEntries.map(([p]) => PLAN_CHART_COLORS[p] || 'rgba(255,255,255,.1)'),
+          borderColor: 'rgba(7,7,16,1)',
+          borderWidth: 2,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '65%',
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: { color: 'rgba(237,234,224,.45)', font: { family: 'DM Mono', size: 9 }, boxWidth: 10, padding: 10 },
+          },
+          tooltip: {
+            backgroundColor: 'rgba(11,11,28,.95)',
+            titleFont: { family: 'DM Mono', size: 9 },
+            bodyFont: { family: 'DM Mono', size: 9 },
+            callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.parsed + '名' },
+          },
+        },
+      },
+    });
+
+  } catch (e) {
+    gsToast(e.message, 'error');
+    if (e.message.includes('管理者')) {
+      document.querySelector('.main').innerHTML = '<div style="padding:80px;text-align:center;font-family:\'DM Mono\',monospace;font-size:12px;color:var(--rd);">管理者権限がありません</div>';
+    }
+  }
+}
+
+async function runCron() {
+  try {
+    const data = await gsApi('/api/cron', {
+      method: 'GET',
+      headers: { 'x-cron-secret': localStorage.getItem('gs_cron_secret') || '' }
+    });
+    gsToast(`Cron実行完了: ${data.ran}件処理`, 'ok');
+    await loadStats();
+  } catch (e) {
+    gsToast(e.message, 'error');
+  }
+}
+</script>
+</body>
+</html>

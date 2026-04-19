@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/gs-design.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Mono:wght@400&display=swap">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — Geoscope</title>
+<meta name="description" content="404 — ページが見つかりません | Geoscope">
+<style>
+:root{--bg:#070710;--tx:#edeae0;--t3:rgba(237,234,224,.22);--pu:#8b7cf8;--bd:rgba(255,255,255,.06);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:'DM Mono',monospace;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;}
+.num{font-family:'Cormorant Garamond',serif;font-size:clamp(100px,20vw,200px);font-weight:300;color:var(--t3);line-height:1;margin-bottom:16px;}
+.msg{font-size:10px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:32px;}
+a{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--tx);text-decoration:none;padding:12px 28px;}
+</style>
+</head>
+<body>
+<div>
+  <div class="num">404</div>
+  <div class="msg">ページが見つかりません</div>
+  <a href="/">トップへ戻る</a>
+</div>
+<script src="/themes.js"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>{initTheme();mountThemeButton();});</script>
+</body>
+</html>

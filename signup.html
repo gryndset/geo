@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<link rel="canonical" href="https://geoscope.jp/signup.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新規登録 — Geoscope</title>
+<meta name="description" content="Geoscopeに登録して、AI検索でのブランド出現率を無料でトラッキング。">
+<link rel="stylesheet" href="/gs-design.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#070710;--bg2:#0b0b1c;--sf:#10101f;--bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.12);--tx:#edeae0;--t2:rgba(237,234,224,.52);--t3:rgba(237,234,224,.22);--gn:#3ddc84;--am:#f0b429;--rd:#ef6060;--pu:#8b7cf8;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;}
+.page{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.card{width:100%;max-width:420px;background:var(--bg2);border:1px solid var(--bd);padding:48px 40px;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;letter-spacing:8px;text-transform:uppercase;text-align:center;margin-bottom:8px;}
+.logo-sub{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;text-align:center;margin-bottom:40px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;margin-bottom:8px;}
+.card-sub{font-size:13px;color:var(--t2);margin-bottom:28px;line-height:1.6;}
+.field{margin-bottom:16px;}
+.field-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:6px;}
+.field-input{width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 14px;outline:none;transition:border-color .2s;}
+.field-input:focus{border-color:var(--pu);}
+.btn-primary{width:100%;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:14px;background:var(--tx);color:var(--bg);border:none;cursor:pointer;margin-top:8px;transition:opacity .2s;}
+.btn-primary:hover{opacity:.87;}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+.err-msg{font-family:'DM Mono',monospace;font-size:9px;color:var(--rd);margin-top:12px;letter-spacing:.5px;display:none;}
+.ok-msg{font-family:'DM Mono',monospace;font-size:9px;color:var(--gn);margin-top:12px;letter-spacing:.5px;display:none;line-height:1.7;}
+.plan-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;border:1px solid rgba(61,220,132,.3);color:var(--gn);padding:3px 10px;margin-bottom:20px;}
+.terms{font-size:11px;color:var(--t3);margin-top:16px;line-height:1.7;}
+.terms a{color:var(--t3);text-decoration:underline;}
+.link-row{text-align:center;font-size:12px;color:var(--t3);margin-top:20px;}
+.link-row a{color:var(--pu);text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="card">
+    <div class="logo">Geoscope</div>
+    <div class="logo-sub">GEO Tracking SaaS</div>
+    <div class="card-title">無料で始める</div>
+    <div class="card-sub">APIキーだけ用意すればOK。登録後すぐにスキャンできます。</div>
+    <div class="plan-badge">● FREE PLAN — ¥0</div>
+
+    <div class="field">
+      <div class="field-label">お名前</div>
+      <input id="name" class="field-input" type="text" placeholder="山田 太郎" autocomplete="name">
+    </div>
+    <div class="field">
+      <div class="field-label">メールアドレス</div>
+      <input id="email" class="field-input" type="email" placeholder="hello@example.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <div class="field-label">パスワード（8文字以上）</div>
+      <input id="password" class="field-input" type="password" placeholder="••••••••" autocomplete="new-password">
+    </div>
+    <div class="field">
+      <div class="field-label">パスワード（確認）</div>
+      <input id="password2" class="field-input" type="password" placeholder="••••••••" autocomplete="new-password">
+    </div>
+
+    <button class="btn-primary" id="signup-btn" onclick="doSignup()">アカウントを作成 →</button>
+    <div class="err-msg" id="err-msg"></div>
+    <div class="ok-msg" id="ok-msg"></div>
+
+    <div class="terms">登録することで<a href="#">利用規約</a>および<a href="#">プライバシーポリシー</a>に同意したことになります。</div>
+    <div class="link-row">すでにアカウントをお持ちの方は <a href="login.html">ログイン</a></div>
+  </div>
+</div>
+
+<script src="/gs-client.js"></script>
+<script src="/themes.js"></script>
+<script>
+if (gsIsLoggedIn()) window.location.href = '/dashboard.html';
+initTheme();
+
+async function doSignup() {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const password2 = document.getElementById('password2').value;
+  const btn = document.getElementById('signup-btn');
+  const err = document.getElementById('err-msg');
+  const ok = document.getElementById('ok-msg');
+
+  if (!email || !password) { showErr('メールとパスワードを入力してください'); return; }
+  if (password.length < 8) { showErr('パスワードは8文字以上にしてください'); return; }
+  if (password !== password2) { showErr('パスワードが一致しません'); return; }
+
+  btn.textContent = '作成中...'; btn.disabled = true;
+  err.style.display = 'none'; ok.style.display = 'none';
+
+  try {
+    await gsAuth.signup(email, password, name);
+    ok.style.display = 'block';
+    ok.textContent = '確認メールを送信しました。メールのリンクをクリックしてアカウントを有効化してください。';
+    btn.style.display = 'none';
+  } catch (e) {
+    showErr(e.message);
+    btn.textContent = 'アカウントを作成 →'; btn.disabled = false;
+  }
+}
+
+function showErr(msg) {
+  const err = document.getElementById('err-msg');
+  err.textContent = msg; err.style.display = 'block';
+}
+</script>
+</body>
+</html>

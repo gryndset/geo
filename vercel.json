@@ -1,0 +1,61 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "gs-design.css", "use": "@vercel/static" },
+    { "src": "api/**/*.js", "use": "@vercel/node" },
+    { "src": "*.html", "use": "@vercel/static" },
+    { "src": "gs-client.js", "use": "@vercel/static" },
+    { "src": "themes.js", "use": "@vercel/static" },
+    { "src": "sw.js", "use": "@vercel/static" },
+    { "src": "manifest.json", "use": "@vercel/static" },
+    { "src": "*.xml", "use": "@vercel/static" },
+    { "src": "*.txt", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/gs-design.css", "dest": "/gs-design.css" },
+    { "src": "/api/stripe/webhook", "dest": "/api/stripe" },
+    { "src": "/api/stripe(.*)", "dest": "/api/stripe$1" },
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/gs-client.js", "dest": "/gs-client.js" },
+    { "src": "/themes.js", "dest": "/themes.js" },
+    { "src": "/sw.js", "dest": "/sw.js" },
+    { "src": "/manifest.json", "dest": "/manifest.json" },
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/(.*\\.html)", "dest": "/$1" },
+    { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
+    { "src": "/robots.txt", "dest": "/robots.txt" },
+    { "src": "/llms.txt", "dest": "/llms.txt" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/404.html", "status": 404 }
+  ],
+  "crons": [
+    { "path": "/api/cron", "schedule": "0 9 * * 1" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "no-store" }]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache" }, { "key": "Service-Worker-Allowed", "value": "/" }]
+    },
+    {
+      "source": "/manifest.json",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
+    },
+    {
+      "source": "/(.*\\.html)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
+    }
+  ]
+}

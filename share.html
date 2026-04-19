@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スキャン結果 — Geoscope</title>
+<meta name="description" content="Geoscopeで計測したGEO出現率の共有ページ。">
+<link rel="stylesheet" href="/gs-design.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap">
+<style>
+:root{--bg:#070710;--bg2:#0b0b1c;--sf:#10101f;--bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.12);--tx:#edeae0;--t2:rgba(237,234,224,.52);--t3:rgba(237,234,224,.22);--gn:#3ddc84;--am:#f0b429;--rd:#ef6060;--pu:#8b7cf8;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4;}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(7,7,16,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
+.nl{text-decoration:none;}
+.nlm{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;letter-spacing:7px;text-transform:uppercase;color:var(--tx);}
+.nls{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;}
+.nav-r{display:flex;gap:8px;}
+.nav-cta{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--tx);text-decoration:none;padding:8px 18px;}
+
+.main{max-width:800px;margin:0 auto;padding:90px 40px 80px;}
+
+/* 共有バナー */
+.share-banner{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;border:1px solid var(--bd);padding:8px 16px;display:inline-flex;align-items:center;gap:8px;margin-bottom:32px;}
+.share-dot{width:6px;height:6px;border-radius:50%;background:var(--pu);}
+
+/* ヒーロー */
+.hero{margin-bottom:40px;}
+.hero-tag{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:12px;}
+.hero-brand{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,6vw,64px);font-weight:300;line-height:1.05;margin-bottom:8px;}
+.hero-date{font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);letter-spacing:1px;}
+
+/* スコア */
+.score-section{display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;background:var(--bg2);border:1px solid var(--bd);padding:36px;margin-bottom:24px;}
+.score-num{font-family:'Cormorant Garamond',serif;font-size:96px;font-weight:300;line-height:1;}
+.score-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:4px;}
+.score-sub{font-size:13px;color:var(--t2);}
+
+/* AI別 */
+.ai-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);margin-bottom:24px;}
+.ai-cell{background:var(--bg);padding:20px 24px;}
+.ai-name{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;}
+.ai-rate{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;line-height:1;margin-bottom:4px;}
+.ai-bar-bg{height:3px;background:rgba(255,255,255,.06);margin-top:8px;}
+.ai-bar-fill{height:100%;transition:width .6s ease;}
+
+/* 引用URL */
+.cite-section{border:1px solid var(--bd);}
+.cite-header{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;padding:14px 20px;border-bottom:1px solid var(--bd);background:rgba(255,255,255,.02);}
+.cite-item{padding:12px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px;}
+.cite-item:last-child{border-bottom:none;}
+.cite-domain{font-family:'DM Mono',monospace;font-size:10px;color:var(--pu);width:160px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cite-url{font-size:11px;color:var(--t3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+.cite-url a{color:var(--t3);text-decoration:none;}
+.cite-url a:hover{color:var(--t2);}
+
+/* フッター */
+.share-footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
+.footer-by{font-family:'DM Mono',monospace;font-size:9px;color:var(--t3);letter-spacing:1px;}
+.footer-link{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--tx);text-decoration:none;padding:8px 16px;}
+
+/* 状態 */
+.state{display:flex;align-items:center;justify-content:center;min-height:60vh;text-align:center;flex-direction:column;gap:16px;}
+.state-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--t2);}
+.state-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--t3);letter-spacing:1px;}
+
+@media(max-width:600px){
+  nav{padding:0 20px;}
+  .main{padding:80px 20px 60px;}
+  .score-section{grid-template-columns:1fr;gap:16px;}
+  .score-num{font-size:72px;}
+  .ai-grid{grid-template-columns:1fr 1fr;}
+  .share-footer{flex-direction:column;gap:16px;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nl">
+    <div class="nlm">Geoscope</div>
+    <div class="nls">GEO Tracking SaaS</div>
+  </a>
+  <div class="nav-r">
+    <a href="signup.html" class="nav-cta">無料で始める →</a>
+  </div>
+</nav>
+
+<main class="main">
+  <div id="content">
+    <div class="state">
+      <div class="state-title">読み込み中...</div>
+    </div>
+  </div>
+</main>
+
+<script>
+const AI_COLORS = {chatgpt:'#3ddc84', perplexity:'#8b7cf8', gemini:'#f0b429', claude:'rgba(237,234,224,.6)'};
+const AI_LABELS = {chatgpt:'ChatGPT', perplexity:'Perplexity', gemini:'Gemini', claude:'Claude'};
+
+async function loadShare() {
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('s');
+  const dataParam = params.get('data');
+
+  // ?data=エンコードデータ（ローカル共有）
+  if (dataParam) {
+    try {
+      const decoded = JSON.parse(decodeURIComponent(atob(dataParam)));
+      render(decoded);
+      return;
+    } catch(e) {
+      showError('共有データが不正です');
+      return;
+    }
+  }
+
+  // ?s=slug（Supabase経由共有）
+  if (!slug) { showError('共有URLが無効です'); return; }
+  try {
+    const resp = await fetch(`/api/share?action=view&slug=${slug}`);
+    const data = await resp.json();
+    if (!resp.ok) { showError(data.error || 'データが見つかりません'); return; }
+    render(data);
+  } catch (e) {
+    showError('データの読み込みに失敗しました');
+  }
+}
+
+function render(d) {
+  const avgRate = d.avg_rate ?? 0;
+  const rateColor = avgRate >= 70 ? 'var(--gn)' : avgRate >= 40 ? 'var(--am)' : 'var(--rd)';
+  const aiEntries = Object.entries(d.by_ai || {}).filter(([, v]) => v !== null && v !== undefined);
+
+  const aiCells = aiEntries.map(([ai, rate]) => `
+    <div class="ai-cell">
+      <div class="ai-name">${AI_LABELS[ai] || ai}</div>
+      <div class="ai-rate" style="color:${AI_COLORS[ai] || 'var(--t2)'};">${rate}<span style="font-size:18px;">%</span></div>
+      <div class="ai-bar-bg"><div class="ai-bar-fill" style="width:${rate}%;background:${AI_COLORS[ai]};opacity:.7;"></div></div>
+    </div>
+  `).join('');
+
+  const citeRows = (d.citations || []).slice(0, 10).map(c => `
+    <div class="cite-item">
+      <div class="cite-domain">${c.domain}</div>
+      <div class="cite-url"><a href="${c.url}" target="_blank" rel="noopener">${c.url}</a></div>
+    </div>
+  `).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="share-banner"><div class="share-dot"></div>SHARED RESULT — Geoscope</div>
+
+    <div class="hero">
+      <div class="hero-tag">GEO出現率レポート</div>
+      <div class="hero-brand">${d.brand_name}</div>
+      <div class="hero-date">${d.scanned_at ? new Date(d.scanned_at).toLocaleString('ja-JP') : ''} スキャン</div>
+    </div>
+
+    <div class="score-section">
+      <div>
+        <div class="score-label">4AI平均出現率</div>
+        <div class="score-num" style="color:${rateColor};">${avgRate}<span style="font-size:40px;">%</span></div>
+      </div>
+      <div>
+        <div class="score-label" style="margin-bottom:8px;">概要</div>
+        <div class="score-sub">
+          ChatGPT・Perplexity・Gemini・Claudeの4つのAIに${d.brand_name}が出現した割合です。
+          ${aiEntries.length}つのAIで計測し、${d.total_citations || 0}件の引用URLが確認されました。
+        </div>
+      </div>
+    </div>
+
+    ${aiCells ? `<div class="ai-grid">${aiCells}</div>` : ''}
+
+    ${citeRows ? `
+      <div class="cite-section">
+        <div class="cite-header">引用URL（${Math.min(d.citations?.length || 0, 10)}件）</div>
+        ${citeRows}
+      </div>
+    ` : ''}
+
+    <div class="share-footer">
+      <div class="footer-by">Powered by Geoscope — AI検索出現率トラッキングSaaS</div>
+      <a href="signup.html" class="footer-link">無料で始める →</a>
+    </div>
+  `;
+
+  // ページタイトル更新
+  document.title = `${d.brand_name} — GEO出現率 ${avgRate}% | Geoscope`;
+}
+
+function showError(msg) {
+  document.getElementById('content').innerHTML = `
+    <div class="state">
+      <div class="state-title">${msg}</div>
+      <div class="state-sub">URLが正しいか確認してください</div>
+      <a href="index.html" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--tx);text-decoration:none;padding:10px 24px;margin-top:8px;">トップへ →</a>
+    </div>
+  `;
+}
+
+loadShare();
+</script>
+</body>
+</html>

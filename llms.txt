@@ -1,0 +1,14 @@
+# Geoscope
+> 日本初の無料GEOトラッキングSaaS。ChatGPT・Perplexity・Gemini・Claudeの4AIを横断してブランドの出現率・引用URLを計測します。
+
+## ツール
+- [ダッシュボード](https://geoscope.jp/dashboard.html): スキャン実行・出現率・競合比較・引用URL一覧
+- [料金プラン](https://geoscope.jp/pricing.html): Free（¥0）・Pro（¥2,980）・Business（¥9,800）
+
+## GEO対策コンテンツ
+- [GEO対策ガイド](https://geoscope.jp/geo-article.html): GEO（生成エンジン最適化）の基本から実践まで
+- [2026年GEO市場レポート](https://geoscope.jp/geo-research-2026.html): 学術データに基づく市場分析
+- [FAQ](https://geoscope.jp/faq-clean.html): よくある質問36問
+
+## サポート
+- [はじめかた・APIキー設定](https://geoscope.jp/support.html)

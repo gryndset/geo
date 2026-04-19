@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/gs-design.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap">
+<link rel="canonical" href="https://geoscope.jp/support.html">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サポート — Geoscope | APIキー取得からはじめ方まで</title>
+<meta property="og:title" content="サポート・はじめかた — Geoscope">
+<meta property="og:description" content="GeoscopeのAPIキー取得方法・初期設定・よくあるトラブル解決まで。5分で使い始められるサポートガイド。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Geoscope">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="サポート・はじめかた — Geoscope">
+<meta name="twitter:description" content="GeoscopeのAPIキー取得方法・初期設定・よくあるトラブル解決まで。5分で使い始められるサポートガイド。">
+<meta name="description" content="GeoscopeのAPIキー取得方法・初期設定・よくあるトラブル解決まで。5分で使い始められるサポートガイド。">
+<style>
+:root{
+  --bg:#070710;--bg2:#0b0b1c;--sf:#10101f;
+  --bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.12);
+  --tx:#edeae0;--t2:rgba(237,234,224,.52);--t3:rgba(237,234,224,.22);
+  --gn:#3ddc84;--am:#f0b429;--rd:#ef6060;--pu:#8b7cf8;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(7,7,16,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
+.nl{text-decoration:none;}
+.nlm{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;letter-spacing:7px;text-transform:uppercase;color:var(--tx);line-height:1;}
+.nls{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;}
+.nav-links{display:flex;gap:4px;list-style:none;}
+.nav-links a{font-size:12px;color:var(--t2);text-decoration:none;padding:5px 12px;border-radius:3px;transition:all .2s;}
+.nav-links a:hover{color:var(--tx);}
+.nav-links a.active{color:var(--tx);}
+.nav-r{display:flex;gap:8px;align-items:center;}
+.nav-ghost{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);text-decoration:none;padding:6px 14px;border:1px solid var(--bd);}
+.nav-cta{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--bg);background:var(--tx);text-decoration:none;padding:8px 18px;}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:240px 1fr;max-width:1200px;margin:0 auto;padding:80px 40px 100px;gap:60px;}
+
+/* TOC */
+.toc{position:sticky;top:80px;height:fit-content;}
+.toc-label{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--bd);}
+.toc-item{display:block;font-size:12px;color:var(--t3);text-decoration:none;padding:7px 0;border-bottom:1px solid var(--bd);transition:color .2s;}
+.toc-item:hover{color:var(--t2);}
+.toc-item.active{color:var(--pu);}
+.toc-sub{display:block;font-size:11px;color:var(--t3);text-decoration:none;padding:5px 0 5px 12px;border-bottom:1px solid var(--bd);transition:color .2s;opacity:.7;}
+.toc-sub:hover{color:var(--t2);}
+
+/* CONTENT */
+.content{}
+.hero-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;color:var(--t3);text-transform:uppercase;margin-bottom:16px;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,56px);font-weight:300;line-height:1.1;letter-spacing:-1px;color:var(--tx);margin-bottom:16px;}
+.hero-sub{font-size:15px;font-weight:300;color:var(--t2);line-height:1.7;margin-bottom:48px;}
+
+/* SECTION */
+.section{margin-bottom:56px;scroll-margin-top:80px;}
+.s-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.s-label::after{content:'';flex:1;height:1px;background:var(--bd);}
+.s-h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--tx);margin-bottom:16px;line-height:1.2;}
+.s-body{font-size:14px;font-weight:300;color:var(--t2);line-height:1.8;margin-bottom:20px;}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:1px;}
+.step{display:grid;grid-template-columns:48px 1fr;background:var(--bg2);border:1px solid var(--bd);}
+.step-num{display:flex;align-items:flex-start;justify-content:center;padding:24px 0;border-right:1px solid var(--bd);}
+.step-n{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--t3);}
+.step-body{padding:20px 24px;}
+.step-title{font-size:14px;font-weight:500;color:var(--tx);margin-bottom:8px;}
+.step-desc{font-size:13px;font-weight:300;color:var(--t2);line-height:1.7;}
+.step-code{font-family:'DM Mono',monospace;font-size:11px;background:rgba(255,255,255,.04);border:1px solid var(--bd);padding:10px 14px;margin-top:12px;color:var(--pu);word-break:break-all;}
+.step-link{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;color:var(--pu);text-decoration:none;border-bottom:1px solid rgba(139,124,248,.3);padding-bottom:1px;margin-top:10px;display:inline-block;}
+
+/* API CARDS */
+.api-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd);border:1px solid var(--bd);margin-bottom:20px;}
+.api-card{background:var(--bg);padding:20px 24px;}
+.api-name{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.api-desc{font-size:12px;font-weight:300;color:var(--t2);line-height:1.6;margin-bottom:12px;}
+.api-tier{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--t3);margin-bottom:8px;}
+.api-btn{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border:1px solid var(--bd);color:var(--t3);text-decoration:none;display:inline-block;transition:all .2s;}
+.api-btn:hover{color:var(--t2);border-color:var(--bd2);}
+
+/* ALERT */
+.alert{padding:16px 20px;border-left:2px solid;margin-bottom:20px;}
+.alert-info{border-color:var(--pu);background:rgba(139,124,248,.06);}
+.alert-warn{border-color:var(--am);background:rgba(240,180,41,.06);}
+.alert-ok{border-color:var(--gn);background:rgba(61,220,132,.06);}
+.alert-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.alert-info .alert-title{color:var(--pu);}
+.alert-warn .alert-title{color:var(--am);}
+.alert-ok .alert-title{color:var(--gn);}
+.alert-body{font-size:13px;font-weight:300;color:var(--t2);line-height:1.7;}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid var(--bd);}
+.faq-q{padding:16px 0;font-size:14px;font-weight:500;color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.faq-q:hover{color:var(--t2);}
+.faq-icon{font-family:'DM Mono',monospace;font-size:14px;color:var(--t3);flex-shrink:0;transition:transform .2s;}
+.faq-a{font-size:13px;font-weight:300;color:var(--t2);line-height:1.8;padding-bottom:16px;display:none;}
+.faq-item.open .faq-a{display:block;}
+.faq-item.open .faq-icon{transform:rotate(45deg);color:var(--pu);}
+
+/* CONTACT */
+.contact-card{background:var(--tx);padding:40px;text-align:center;margin-top:16px;}
+.ct-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--bg);margin-bottom:8px;}
+.ct-sub{font-size:13px;color:rgba(0,0,0,.4);margin-bottom:20px;}
+.ct-btn{display:inline-block;background:var(--bg);color:var(--tx);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 28px;text-decoration:none;}
+
+@media(max-width:860px){
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  .layout{grid-template-columns:1fr;padding:80px 20px 60px;gap:32px;}
+  .toc{display:none;}
+  .api-grid{grid-template-columns:1fr;}
+}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "GeoscopeでGEOトラッキングを始める方法",
+  "description": "APIキーを取得してGEOトラッキングを5分で開始する手順",
+  "step": [
+    {"@type": "HowToStep","position": 1,"name": "Perplexity APIキーを取得","text": "perplexity.ai/settings/apiからAPIキーを取得します"},
+    {"@type": "HowToStep","position": 2,"name": "OpenAI APIキーを取得","text": "platform.openai.com/api-keysからAPIキーを取得します"},
+    {"@type": "HowToStep","position": 3,"name": "Gemini APIキーを取得","text": "aistudio.google.comからAPIキーを取得します"},
+    {"@type": "HowToStep","position": 4,"name": "ダッシュボードでスキャン実行","text": "ブランド名を入力してスキャンボタンを押します"}
+  ]
+}
+</script>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nl">
+    <div class="nlm">Geoscope</div>
+    <div class="nls">GEO Tracking SaaS</div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="dashboard.html">ダッシュボード</a></li>
+    <li><a href="geo-article.html">GEO対策</a></li>
+    <li><a href="pricing.html">料金</a></li>
+    <li><a href="faq-clean.html">FAQ</a></li>
+    <li><a href="support.html" class="active">サポート</a></li>
+  </ul>
+  <div class="nav-r">
+    <a href="login.html" class="nav-ghost">ログイン</a>
+    <a href="signup.html" class="nav-cta">今すぐ試す →</a>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- TOC -->
+  <nav class="toc">
+    <div class="toc-label">目次</div>
+    <a class="toc-item active" href="#start">はじめかた</a>
+    <a class="toc-sub" href="#api-keys">APIキーの取得</a>
+    <a class="toc-sub" href="#first-scan">最初のスキャン</a>
+    <a class="toc-item" href="#api-guide">API詳細ガイド</a>
+    <a class="toc-item" href="#trouble">よくあるトラブル</a>
+    <a class="toc-item" href="#contact">お問い合わせ</a>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="hero-tag">サポートドキュメント</div>
+    <h1 class="hero-title">5分で<br>はじめられます</h1>
+    <p class="hero-sub">APIキーを用意するだけ。登録不要、課金なし。<br>このページを読めば今日からGEOを計測できます。</p>
+
+    <!-- はじめかた -->
+    <section id="start" class="section">
+      <div class="s-label">Step by Step</div>
+      <h2 class="s-h2">はじめかた</h2>
+
+      <div class="alert alert-ok">
+        <div class="alert-title">無料で使えます</div>
+        <div class="alert-body">Geoscope自体への支払いは一切不要です。各AIプラットフォームのAPIキー（無料枠あり）だけ用意してください。</div>
+      </div>
+
+      <div id="api-keys" class="steps">
+        <div class="step">
+          <div class="step-num"><div class="step-n">1</div></div>
+          <div class="step-body">
+            <div class="step-title">Perplexity APIキーを取得する（推奨・最初に入れる）</div>
+            <div class="step-desc">PerplexityのAPIは引用URLも返してくれるため、GEOトラッキングに最適です。まずここから始めてください。</div>
+            <a class="step-link" href="https://www.perplexity.ai/settings/api" target="_blank" rel="noopener">perplexity.ai/settings/api →</a>
+            <div class="step-desc" style="margin-top:10px;">取得したキーをダッシュボードの「設定」に貼り付けてください。</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"><div class="step-n">2</div></div>
+          <div class="step-body">
+            <div class="step-title">OpenAI APIキーを取得する（ChatGPT用）</div>
+            <div class="step-desc">ChatGPTでの出現率を計測するために必要です。OpenAIのプラットフォームから取得できます。無料クレジットがあります。</div>
+            <a class="step-link" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys →</a>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"><div class="step-n">3</div></div>
+          <div class="step-body">
+            <div class="step-title">Gemini APIキーを取得する（任意）</div>
+            <div class="step-desc">Google AI StudioからGemini用のAPIキーを無料で取得できます。</div>
+            <a class="step-link" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com →</a>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num"><div class="step-n">4</div></div>
+          <div class="step-body">
+            <div class="step-title">Anthropic APIキーを取得する（Claude用）</div>
+            <div class="step-desc">AnthropicのコンソールからClaude用APIキーを取得します。</div>
+            <a class="step-link" href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com →</a>
+          </div>
+        </div>
+        <div id="first-scan" class="step">
+          <div class="step-num"><div class="step-n">5</div></div>
+          <div class="step-body">
+            <div class="step-title">最初のスキャンを実行する</div>
+            <div class="step-desc">ダッシュボードを開き、ブランド名を入力してスキャンボタンを押すだけです。結果は数分で表示されます。</div>
+            <a class="step-link" href="dashboard.html">ダッシュボードへ →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API GUIDE -->
+    <section id="api-guide" class="section">
+      <div class="s-label">API詳細</div>
+      <h2 class="s-h2">各APIの無料枠</h2>
+      <p class="s-body">どのAPIも無料枠があります。個人利用・検証レベルであれば、ほぼコストはかかりません。</p>
+
+      <div class="api-grid">
+        <div class="api-card">
+          <div class="api-name" style="color:var(--pu);">Perplexity Sonar</div>
+          <div class="api-desc">引用URLも返してくれる唯一のAPI。GEOトラッキングには最重要。</div>
+          <div class="api-tier">無料枠：$5クレジット / 従量課金</div>
+          <a class="api-btn" href="https://docs.perplexity.ai" target="_blank" rel="noopener">Docs →</a>
+        </div>
+        <div class="api-card">
+          <div class="api-name" style="color:var(--gn);">OpenAI GPT</div>
+          <div class="api-desc">ChatGPTでのブランド出現率を計測。引用URLは返さないが出現頻度は取得可能。</div>
+          <div class="api-tier">無料枠：$5クレジット（新規）</div>
+          <a class="api-btn" href="https://platform.openai.com/docs" target="_blank" rel="noopener">Docs →</a>
+        </div>
+        <div class="api-card">
+          <div class="api-name" style="color:var(--am);">Google Gemini</div>
+          <div class="api-desc">GeminiでのGEO出現率を計測。Google AI Studioから無料で利用可能。</div>
+          <div class="api-tier">無料枠：1500リクエスト/日</div>
+          <a class="api-btn" href="https://ai.google.dev/docs" target="_blank" rel="noopener">Docs →</a>
+        </div>
+        <div class="api-card">
+          <div class="api-name" style="color:var(--t2);">Anthropic Claude</div>
+          <div class="api-desc">ClaudeでのGEO出現率を計測。</div>
+          <div class="api-tier">無料枠：$5クレジット（新規）</div>
+          <a class="api-btn" href="https://docs.anthropic.com" target="_blank" rel="noopener">Docs →</a>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <div class="alert-title">コスト目安</div>
+        <div class="alert-body">週1回スキャン・ブランド1社・競合2社・20プロンプトの場合、月間API費用は概算で数百円〜1,000円程度です。無料クレジットの範囲で数ヶ月は動きます。</div>
+      </div>
+    </section>
+
+    <!-- TROUBLE -->
+    <section id="trouble" class="section">
+      <div class="s-label">トラブルシューティング</div>
+      <h2 class="s-h2">よくあるトラブル</h2>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          APIキーを入れてもスキャンできない
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">APIキーに余分なスペースが入っていないか確認してください。また、各APIプラットフォームでキーが有効（Active）になっているか確認してください。新規作成直後は反映に数分かかる場合があります。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          スキャン結果が毎回変わる
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">これは正常な動作です。AIの出力は同じプロンプトでも毎回変わります。Geoscopeは複数回クエリを投げて平均を取ることで、より安定したデータを提供しています。週単位のトレンドで見ることをお勧めします。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          自社ブランドが1回も出現しない
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">特にローンチ直後のブランドや、Webでの情報量が少ないブランドはAIに認識されていない可能性があります。まずSEO対策で自社サイトの情報量を増やすことが先決です。GEO対策ページも参考にしてください。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          引用URLに知らないサイトが表示される
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">AIはそのサイトを「あなたのブランドに言及している信頼性の高いページ」として評価している可能性があります。そのサイトの内容を確認し、情報が古い・誤りがある場合はサイト管理者に更新依頼を出すことも対策の一つです。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          スキャンに時間がかかりすぎる
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-a">4つのAIに対して複数のプロンプトを投げるため、1スキャンに1〜3分かかる場合があります。バックグラウンドで処理されるため、ブラウザを開いたままにしておいてください。</div>
+      </div>
+
+      <div class="alert alert-warn" style="margin-top:24px;">
+        <div class="alert-title">解決しない場合</div>
+        <div class="alert-body">上記で解決しない場合は、下のお問い合わせフォームからご連絡ください。APIキーのエラーメッセージのスクリーンショットがあると対応が早くなります。</div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+      <div class="s-label">お問い合わせ</div>
+      <h2 class="s-h2">解決しない場合は<br>お気軽にどうぞ</h2>
+      <p class="s-body">フィードバック・機能リクエスト・バグ報告など、なんでもお送りください。</p>
+
+      <div style="background:var(--bg2);border:1px solid var(--bd);padding:32px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;">お名前</div>
+            <input type="text" placeholder="山田 太郎" style="width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 14px;outline:none;">
+          </div>
+          <div>
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;">メールアドレス</div>
+            <input type="email" placeholder="hello@example.com" style="width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 14px;outline:none;">
+          </div>
+        </div>
+        <div style="margin-bottom:16px;">
+          <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;">種類</div>
+          <select style="width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-size:13px;padding:10px 14px;outline:none;appearance:none;">
+            <option>バグ報告</option>
+            <option>機能リクエスト</option>
+            <option>使い方の質問</option>
+            <option>その他</option>
+          </select>
+        </div>
+        <div style="margin-bottom:20px;">
+          <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;">内容</div>
+          <textarea rows="5" placeholder="具体的にお書きください" style="width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 14px;outline:none;resize:vertical;"></textarea>
+        </div>
+        <button id="contact-submit" onclick="submitContact()" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 28px;background:var(--tx);color:var(--bg);border:none;cursor:pointer;">送信する →</button>
+<div id="contact-msg" style="margin-top:12px;font-family:'DM Mono',monospace;font-size:10px;display:none;"></div>
+<script>
+async function submitContact(){
+  const btn = document.getElementById('contact-submit');
+  const msg = document.getElementById('contact-msg');
+  const name = document.querySelector('input[placeholder="山田 太郎"]').value.trim();
+  const email = document.querySelector('input[type="email"]').value.trim();
+  const type = document.querySelector('select').value;
+  const message = document.querySelector('textarea').value.trim();
+  if(!name||!email||!message){
+    msg.style.display='block';msg.style.color='var(--rd)';msg.textContent='名前・メール・内容を入力してください';return;
+  }
+  btn.textContent='送信中...';btn.disabled=true;
+  try{
+    const resp = await fetch('/api/contact',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,email,type,message})
+    });
+    const data = await resp.json();
+    if(resp.ok){
+      msg.style.display='block';msg.style.color='var(--gn)';
+      msg.textContent='送信しました。確認メールをお送りしました。';
+      btn.style.display='none';
+    } else {
+      throw new Error(data.error||'送信失敗');
+    }
+  }catch(e){
+    msg.style.display='block';msg.style.color='var(--rd)';
+    msg.textContent='エラー: '+e.message;
+    btn.textContent='送信する →';btn.disabled=false;
+  }
+}
+</script>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+function toggleFaq(el){
+  el.parentElement.classList.toggle('open');
+}
+// TOC active on scroll
+const sections = document.querySelectorAll('.section');
+const tocItems = document.querySelectorAll('.toc-item,.toc-sub');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{if(s.getBoundingClientRect().top<120)current=s.id;});
+  tocItems.forEach(t=>{t.classList.toggle('active',t.getAttribute('href')==='#'+current);});
+});
+</script>
+<script src="/themes.js"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>{initTheme();mountThemeButton();});</script>
+</body>
+</html>
