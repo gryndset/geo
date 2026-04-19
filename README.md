@@ -92,3 +92,4 @@ geoscope/
 | OpenAI | platform.openai.com/api-keys | $5クレジット |
 | Gemini | aistudio.google.com/app/apikey | 1500回/日 |
 | Anthropic | console.anthropic.com/settings/keys | $5クレジット |
+ 
