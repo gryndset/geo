@@ -10,17 +10,17 @@
 <link rel="stylesheet" href="/gs-design.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap">
 <style>
-:root{--bg:#070710;--bg2:#0b0b1c;--sf:#10101f;--bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.12);--tx:#edeae0;--t2:rgba(237,234,224,.52);--t3:rgba(237,234,224,.22);--gn:#3ddc84;--am:#f0b429;--rd:#ef6060;--pu:#8b7cf8;}
+:root{--bg:#0d1017;--bg2:#141920;--sf:#1a2130;--bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.13);--tx:#cdd5e0;--t2:rgba(205,213,224,.52);--t3:rgba(205,213,224,.28);--gn:#7bbf96;--am:#c9a96e;--rd:#c47a7a;--pu:#89c4d4;}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;}
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(7,7,16,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
+body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(7,7,16,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
 .nl{text-decoration:none;}
-.nlm{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;letter-spacing:7px;text-transform:uppercase;color:var(--tx);line-height:1;}
+.nlm{font-family:'DM Serif Display',serif;font-size:19px;font-weight:400;letter-spacing:7px;text-transform:uppercase;color:var(--tx);line-height:1;}
 .nls{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;}
 .nav-links{display:flex;gap:4px;list-style:none;}
-.nav-links a{font-size:12px;color:var(--t2);text-decoration:none;padding:5px 12px;border-radius:3px;transition:all .2s;}
+.nav-links a{font-size:12px;color:var(--t2);text-decoration:none;padding:5px 12px;border-radius:6px;transition:all .2s;}
 .nav-links a:hover,.nav-links a.active{color:var(--tx);}
 .nav-r{display:flex;gap:8px;align-items:center;}
 
@@ -35,11 +35,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
 .section{margin-bottom:48px;scroll-margin-top:80px;}
 .s-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
 .s-label::after{content:'';flex:1;height:1px;background:var(--bd);}
-.s-h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;margin-bottom:20px;}
+.s-h2{font-family:'DM Serif Display',serif;font-size:24px;font-weight:300;margin-bottom:20px;}
 .card{background:var(--bg2);border:1px solid var(--bd);padding:24px 28px;margin-bottom:12px;}
 .field{margin-bottom:16px;}
 .field-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:6px;}
-.field-input{width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-size:13px;padding:10px 14px;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s;}
+.field-input{width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-size:13px;padding:10px 14px;outline:none;font-family:'Inter',sans-serif;transition:border-color .2s;}
 .field-input:focus{border-color:var(--pu);}
 .field-row{display:flex;gap:10px;}
 .field-row .field-input{flex:1;}
@@ -196,11 +196,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
       <div class="card">
         <div class="theme-grid" id="theme-grid">
           ${Object.entries({
-            dark: {label:'ダーク', bg:'#070710', accent:'#8b7cf8'},
+            dark: {label:'ダーク', bg:'#0d1017', accent:'#89c4d4'},
             light: {label:'ライト', bg:'#fafaf8', accent:'#6d28d9'},
             midnight: {label:'ミッドナイト', bg:'#000000', accent:'#aa88ff'},
             sepia: {label:'セピア', bg:'#1c1510', accent:'#c4a0e8'},
-            forest: {label:'フォレスト', bg:'#0a110a', accent:'#4ade80'},
+            forest: {label:'フォレスト', bg:'#0a110a', accent:'#7bbf96'},
           }).map(([key, t]) => `
             <div class="theme-card" data-theme="${key}" onclick="changeTheme('${key}')">
               <div class="theme-preview" style="background:${t.bg};display:flex;align-items:flex-end;padding:6px;">

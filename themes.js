@@ -168,7 +168,7 @@ function openThemePanel() {
   `;
 
   panel.innerHTML = `
-    <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:14px;">テーマ</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:14px;">テーマ</div>
     ${Object.entries(THEMES).map(([key, t]) => `
       <label style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;border-bottom:1px solid var(--bd);">
         <input type="radio" name="gs-theme" value="${key}" ${getCurrentTheme() === key ? 'checked' : ''}
@@ -179,7 +179,7 @@ function openThemePanel() {
       </label>
     `).join('')}
     <button onclick="document.getElementById('gs-theme-panel').remove()"
-      style="margin-top:14px;width:100%;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:8px;border:1px solid var(--bd);color:var(--t3);background:transparent;cursor:pointer;">
+      style="margin-top:14px;width:100%;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:8px;border:1px solid var(--bd);color:var(--t3);background:transparent;cursor:pointer;">
       閉じる
     </button>
   `;
@@ -204,7 +204,7 @@ function mountThemeButton() {
   btn.id = 'gs-theme-btn';
   btn.title = 'テーマ切り替え';
   btn.style.cssText = `
-    font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;
+    font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:2px;
     text-transform:uppercase;padding:6px 14px;border:1px solid var(--bd);
     color:var(--t3);background:transparent;cursor:pointer;
     display:flex;align-items:center;gap:6px;

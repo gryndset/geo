@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="/gs-design.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap">
 <link rel="canonical" href="https://geoscope.jp/support.html">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>サポート — Geoscope | APIキー取得からはじめ方まで</title>
@@ -19,21 +19,21 @@
 <meta name="description" content="GeoscopeのAPIキー取得方法・初期設定・よくあるトラブル解決まで。5分で使い始められるサポートガイド。">
 <style>
 :root{
-  --bg:#070710;--bg2:#0b0b1c;--sf:#10101f;
-  --bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.12);
-  --tx:#edeae0;--t2:rgba(237,234,224,.52);--t3:rgba(237,234,224,.22);
-  --gn:#3ddc84;--am:#f0b429;--rd:#ef6060;--pu:#8b7cf8;
+  --bg:#0d1017;--bg2:#141920;--sf:#1a2130;
+  --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.13);
+  --tx:#cdd5e0;--t2:rgba(205,213,224,.52);--t3:rgba(205,213,224,.28);
+  --gn:#7bbf96;--am:#c9a96e;--rd:#c47a7a;--pu:#89c4d4;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4;}
+body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(7,7,16,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(7,7,16,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
 .nl{text-decoration:none;}
-.nlm{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:400;letter-spacing:7px;text-transform:uppercase;color:var(--tx);line-height:1;}
+.nlm{font-family:'DM Serif Display',serif;font-size:19px;font-weight:400;letter-spacing:7px;text-transform:uppercase;color:var(--tx);line-height:1;}
 .nls{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;}
 .nav-links{display:flex;gap:4px;list-style:none;}
-.nav-links a{font-size:12px;color:var(--t2);text-decoration:none;padding:5px 12px;border-radius:3px;transition:all .2s;}
+.nav-links a{font-size:12px;color:var(--t2);text-decoration:none;padding:5px 12px;border-radius:6px;transition:all .2s;}
 .nav-links a:hover{color:var(--tx);}
 .nav-links a.active{color:var(--tx);}
 .nav-r{display:flex;gap:8px;align-items:center;}
@@ -55,21 +55,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
 /* CONTENT */
 .content{}
 .hero-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:4px;color:var(--t3);text-transform:uppercase;margin-bottom:16px;}
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,56px);font-weight:300;line-height:1.1;letter-spacing:-1px;color:var(--tx);margin-bottom:16px;}
+.hero-title{font-family:'DM Serif Display',serif;font-size:clamp(36px,5vw,56px);font-weight:300;line-height:1.1;letter-spacing:-1px;color:var(--tx);margin-bottom:16px;}
 .hero-sub{font-size:15px;font-weight:300;color:var(--t2);line-height:1.7;margin-bottom:48px;}
 
 /* SECTION */
 .section{margin-bottom:56px;scroll-margin-top:80px;}
 .s-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--t3);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
 .s-label::after{content:'';flex:1;height:1px;background:var(--bd);}
-.s-h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--tx);margin-bottom:16px;line-height:1.2;}
+.s-h2{font-family:'DM Serif Display',serif;font-size:28px;font-weight:300;color:var(--tx);margin-bottom:16px;line-height:1.2;}
 .s-body{font-size:14px;font-weight:300;color:var(--t2);line-height:1.8;margin-bottom:20px;}
 
 /* STEPS */
 .steps{display:flex;flex-direction:column;gap:1px;}
 .step{display:grid;grid-template-columns:48px 1fr;background:var(--bg2);border:1px solid var(--bd);}
 .step-num{display:flex;align-items:flex-start;justify-content:center;padding:24px 0;border-right:1px solid var(--bd);}
-.step-n{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--t3);}
+.step-n{font-family:'DM Serif Display',serif;font-size:28px;font-weight:300;color:var(--t3);}
 .step-body{padding:20px 24px;}
 .step-title{font-size:14px;font-weight:500;color:var(--tx);margin-bottom:8px;}
 .step-desc{font-size:13px;font-weight:300;color:var(--t2);line-height:1.7;}
@@ -107,7 +107,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
 
 /* CONTACT */
 .contact-card{background:var(--tx);padding:40px;text-align:center;margin-top:16px;}
-.ct-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--bg);margin-bottom:8px;}
+.ct-title{font-family:'DM Serif Display',serif;font-size:28px;font-weight:300;color:var(--bg);margin-bottom:8px;}
 .ct-sub{font-size:13px;color:rgba(0,0,0,.4);margin-bottom:20px;}
 .ct-btn{display:inline-block;background:var(--bg);color:var(--tx);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 28px;text-decoration:none;}
 
@@ -324,11 +324,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
           <div>
             <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;">お名前</div>
-            <input type="text" placeholder="山田 太郎" style="width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 14px;outline:none;">
+            <input type="text" placeholder="山田 太郎" style="width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;padding:10px 14px;outline:none;">
           </div>
           <div>
             <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;">メールアドレス</div>
-            <input type="email" placeholder="hello@example.com" style="width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 14px;outline:none;">
+            <input type="email" placeholder="hello@example.com" style="width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;padding:10px 14px;outline:none;">
           </div>
         </div>
         <div style="margin-bottom:16px;">
@@ -342,7 +342,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;height:58px;display:flex;ali
         </div>
         <div style="margin-bottom:20px;">
           <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;">内容</div>
-          <textarea rows="5" placeholder="具体的にお書きください" style="width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 14px;outline:none;resize:vertical;"></textarea>
+          <textarea rows="5" placeholder="具体的にお書きください" style="width:100%;background:var(--sf);border:1px solid var(--bd);color:var(--tx);font-family:'Inter',sans-serif;font-size:13px;padding:10px 14px;outline:none;resize:vertical;"></textarea>
         </div>
         <button id="contact-submit" onclick="submitContact()" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px 28px;background:var(--tx);color:var(--bg);border:none;cursor:pointer;">送信する →</button>
 <div id="contact-msg" style="margin-top:12px;font-family:'DM Mono',monospace;font-size:10px;display:none;"></div>

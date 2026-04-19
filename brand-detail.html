@@ -16,8 +16,8 @@
 .back-link{display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;color:var(--t3);text-decoration:none;text-transform:uppercase;margin-bottom:28px;transition:var(--transition);}
 .back-link:hover{color:var(--t2);}
 .brand-header{display:flex;align-items:center;gap:16px;margin-bottom:32px;}
-.brand-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;flex-shrink:0;}
-.brand-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,42px);font-weight:300;}
+.brand-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;flex-shrink:0;}
+.brand-title{font-family:'DM Serif Display',serif;font-size:clamp(28px,4vw,42px);font-weight:300;}
 .brand-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--t3);letter-spacing:1px;margin-top:4px;}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
 .content-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
@@ -35,7 +35,7 @@
 .trend-bars{display:flex;align-items:flex-end;gap:6px;height:100%;position:relative;z-index:1;}
 .trend-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;}
 .trend-bar-inner{width:100%;flex:1;display:flex;align-items:flex-end;}
-.trend-bar{width:100%;border-radius:3px 3px 0 0;transition:height .8s cubic-bezier(.25,1,.5,1);cursor:pointer;position:relative;}
+.trend-bar{width:100%;border-radius:6px 3px 0 0;transition:height .8s cubic-bezier(.25,1,.5,1);cursor:pointer;position:relative;}
 .trend-bar:hover{opacity:.8;}
 .trend-bar-tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--divider);border-radius:6px;padding:4px 8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--tx);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;box-shadow:var(--shadow-sm);}
 .trend-bar:hover .trend-bar-tip{opacity:1;}
@@ -61,7 +61,7 @@
 /* 競合比較 */
 .comp-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--divider);}
 .comp-row:last-child{border-bottom:none;}
-.comp-rank{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--t3);width:24px;flex-shrink:0;}
+.comp-rank{font-family:'DM Serif Display',serif;font-size:20px;font-weight:300;color:var(--t3);width:24px;flex-shrink:0;}
 .comp-name{font-size:13px;font-weight:500;flex:1;}
 .comp-rate{font-family:'DM Mono',monospace;font-size:12px;}
 .you-badge{font-family:'DM Mono',monospace;font-size:8px;padding:2px 7px;border-radius:99px;background:rgba(139,124,248,.12);color:var(--accent);border:1px solid rgba(139,124,248,.3);margin-left:6px;}
@@ -91,8 +91,6 @@
 </head>
 <body>
 
-<div class="gs-glow gs-glow-1"></div>
-<div class="gs-glow gs-glow-2"></div>
 
 <nav class="gs-nav">
   <div style="display:flex;align-items:center;gap:28px;">
@@ -253,7 +251,7 @@
 <!-- 競合追加モーダル -->
 <div class="gs-modal-overlay" id="comp-modal" style="display:none;" onclick="if(event.target===this)document.getElementById('comp-modal').style.display='none'">
   <div class="gs-modal" style="max-width:380px;">
-    <h3 style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;margin-bottom:20px;">競合を追加</h3>
+    <h3 style="font-family:'DM Serif Display',serif;font-size:20px;font-weight:300;margin-bottom:20px;">競合を追加</h3>
     <div style="margin-bottom:16px;">
       <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:6px;">競合ブランド名</div>
       <input id="comp-name-input" class="gs-input" type="text" placeholder="例：競合A">
@@ -314,8 +312,8 @@ function renderHeader(b) {
   document.getElementById('brand-sub').textContent = b.description || `作成: ${new Date(b.created_at).toLocaleDateString('ja-JP')}`;
   const av = document.getElementById('brand-avatar');
   av.textContent = b.name.charAt(0).toUpperCase();
-  av.style.background = (b.color || '#8b7cf8') + '22';
-  av.style.color = b.color || '#8b7cf8';
+  av.style.background = (b.color || '#89c4d4') + '22';
+  av.style.color = b.color || '#89c4d4';
 }
 
 function renderStats(b, stats) {
@@ -348,7 +346,7 @@ function renderTrend(stats) {
     return `${d.getMonth()+1}/${d.getDate()}`;
   });
   const rates = trend.map(t => t.rate);
-  const pointColors = rates.map(r => r >= 70 ? '#3ddc84' : r >= 40 ? '#f0b429' : '#ef6060');
+  const pointColors = rates.map(r => r >= 70 ? '#7bbf96' : r >= 40 ? '#c9a96e' : '#c47a7a');
 
   if (trendChartInstance) trendChartInstance.destroy();
   trendChartInstance = new Chart(canvas, {
@@ -358,7 +356,7 @@ function renderTrend(stats) {
       datasets: [{
         label: 'SOV (%)',
         data: rates,
-        borderColor: '#8b7cf8',
+        borderColor: '#89c4d4',
         backgroundColor: 'rgba(139,124,248,0.08)',
         pointBackgroundColor: pointColors,
         pointBorderColor: pointColors,
@@ -375,11 +373,11 @@ function renderTrend(stats) {
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: '#0b0b1c',
+          backgroundColor: '#141920',
           borderColor: 'rgba(255,255,255,0.08)',
           borderWidth: 1,
           titleColor: 'rgba(237,234,224,0.5)',
-          bodyColor: '#edeae0',
+          bodyColor: '#cdd5e0',
           titleFont: { family: 'DM Mono', size: 9 },
           bodyFont: { family: 'DM Mono', size: 12 },
           callbacks: { label: ctx => ` ${ctx.raw}%` },
